@@ -20,7 +20,8 @@ public class FlerBrukerServer {
 
     public static void main(String[] args) {
         
-        try (ServerSocket lytter = new ServerSocket()) {
+        // Åpner opp en server socket på port 3000 og lytter etter tilkoblinger
+        try (ServerSocket lytter = new ServerSocket(PORT)) {
             System.out.println("Serveren lytter til port" + PORT);
 
             while (true) {
