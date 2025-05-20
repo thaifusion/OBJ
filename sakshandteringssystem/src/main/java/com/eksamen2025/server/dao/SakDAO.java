@@ -2,19 +2,19 @@ package com.eksamen2025.server.dao;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 
-
-// Trenger en databaseManager for å håndtere databaseoperasjoner, 
-
-// Update the import below to match the actual location of Sak.java, for example:
-
+import com.eksamen2025.felles.Prioritet;
+import com.eksamen2025.server.dao.DatabaseUtil;
 import com.eksamen2025.felles.Sak;
+import com.eksamen2025.felles.Sak.Oppsett;
 
 /**
  * @author Sara
@@ -41,34 +41,54 @@ public class SakDAO {
              PreparedStatement pstmt = conn.prepareStatement(spørring);
              ResultSet rs = pstmt.executeQuery(spørring)) {
             
+                // leser alle kolonner fra databasen
             while (rs.next()) {
-                Sak sak = new Sak(); // Oppretter et nytt saks-objekt
-                sak.setId(rs.getInt("id")); // Setter ID-en til saken
-                sak.setTittel(rs.getString("tittel")); // Setter tittel
-                sak.setBeskrivelse(rs.getString("beskrivelse")); // Setter beskrivelse
+                
+                String id = rs.getString("id");
+                String tittel = rs.getString("tittel");
+                String beskrivelse = rs.getString("beskrivelse");
+                String priString= rs.getString("prioritet");
+                String kategori = rs.getString("kategori");
+                String status = rs.getString("status");
+                String innsender = rs.getString("innsender");
+                String mottaker = rs.getString("mottaker");
+                Date opprettet = rs.getDate("opprettet").toLocalDate();
+                Date oppdatertDate = rs.getDate("oppdatert");
+                LocalDate oppdatert = oppdatertDate != null
+                        ? oppdatertDate.toLocalDate() : null; // setter oppdatert til null hvis det ikke finnes
 
-                // Konverterer prioritet, enum til String
-                String pri = rs.getString("prioritet"); // Henter prioritet som String
-                sak.setPrioritet(pri != null ? Prioritet.valueOf(pri) : null); // Setter prioritet
-           
-                sak.setKategori(rs.getString("kategori")); // Setter kategori
-                sak.setStatus(rs.getString("status")); // Setter status
-                sak.setInnsender(rs.getString("innsender")); // Setter innsender
-                sak.setMottaker(rs.getString("mottaker")); // Setter mottaker
-                sak.setOpprettet(rs.getDate("opprettet").toLocalDate()); // Setter opprettet dato
+                String kommentar = rs.getString("kommentar");
+                String tilbakemelding = rs.getString("tilbakemelding");
+                
+                // Konverterer prioritet fra String til enum
+                Prioritet prioritet = priString != null 
+                ? Prioritet.valueOf(priString) : null;
 
-                Date oppdatertDate = rs.getDate("oppdatert"); // Henter oppdatert dato
-                if (oppdatertDate != null) {
-                    sak.setOppdatert(oppdatertDate.toLocalDate()); // Setter oppdatert dato
-                }
 
-                sak.setKommentar(rs.getString("kommentar")); // Setter kommentar
-                sak.setTilbakemelding(rs.getString("tilbakemelding")); // Setter tilbakemelding
-                saker.add(sak); // Legger til saken i listen
+                // Oppretter nytt Sak-objekt via oppsettSak() metoden
+                Sak sak = new Oppsett()
+                    .id(id)
+                    .tittel(tittel)
+                    .beskrivelse(beskrivelse)
+                    .prioritet(prioritet)
+                    .kategori(kategori)
+                    .status(status)
+                    .innsender(innsender)
+                    .mottaker(mottaker)
+                    .opprettet(opprettet)
+                    .oppdatert(oppdatert)
+                    .kommentar(kommentar)
+                    .tilbakemelding(tilbakemelding)
+                    .build(); // Bygger Sak-objektet
+
+                // Legger til saken i listen
+                saker.add(sak); 
             }
+
         } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
+        
         return saker; // Returnerer listen med saker
     }
 
@@ -146,7 +166,7 @@ public class SakDAO {
             int rader = pstmt.executeUpdate(); 
             return rader > 0; // Returnerer true hvis oppdateringen var vellykket
         
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
             return false; // Returnerer false hvis det oppstod en feil
         }
@@ -162,13 +182,29 @@ public class SakDAO {
        // må denne metoden tillate søk på flere søkekriterier? 
     }
 
-    /*
-     * @param 
-     * Henter status på en sak
-     * @return
-    */
-    public void hentStatus() {
+    /**
+     * Henter status på en sak basert på sakens ID.
+     * 
+     * @param sakId ID-en til saken som statusen skal hentes for.
+     * @return Statusen til saken som en String, eller null hvis saken ikke finnes.
+     */
+    public static String hentStatus(int sakId) {
         String spørring = "SELECT status FROM sak WHERE id = ?";
+        
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(spørring)) {
+            
+            pstmt.setInt(1, sakId); // Setter sakId i spørringen
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("status"); // Returnerer statusen til saken
+                }
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+        return null; // Returnerer null hvis saken ikke finnes
     }
     
     /*
@@ -176,16 +212,52 @@ public class SakDAO {
      * Henter prioritet på en sak
      * @return
     */
-    public void hentPrioritet() {
+    public static Prioritet hentPrioritet(int sakId) {
       String spørring = "SELECT prioritet FROM sak WHERE id = ?";
+    
+      try (Connection conn = DatabaseUtil.getConnection();
+          PreparedStatement pstmt = conn.prepareStatement(spørring)) {
+            
+            pstmt.setInt(1, sakId); // binder parameter til sakId
+            
+            // Utfører spørringen og henter resultat
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String verdi = rs.getString("prioritet"); 
+                    if (verdi != null) {
+                        return Prioritet.valueOf(verdi); // Konverterer String til enum
+                    }
+                }
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return null; // Returnerer null hvis saken ikke finnes
     }
 
     /*
      * @param
      * Henter kategori på en sak
      * @return
-     */
-    public void hentKategori() {
+     * */
+    public static String hentKategori(int sakId) {
        String spørring = "SELECT kategori FROM sak WHERE id = ?";
+
+       try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(spørring)) {
+            
+            pstmt.setInt(1, sakId); // Setter sakId i spørringen
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("kategori"); // Returnerer statusen til saken
+                }
+            }
+        } catch (SQLException | IOException e) {
+            e.printStackTrace();
+        }
+        return null; // Returnerer null hvis saken ikke finnes
     }
 }
+
