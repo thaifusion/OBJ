@@ -23,7 +23,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // 1. Hent brukere (med navn + rolle) fra server
-        List<String> brukere = NetworkClient.hentBrukereFraServer();
+        List<Bruker> brukere = NetworkClient.hentBrukereFraServer();
         List<String> brukernavnListe = brukere.stream()
                 .map(Bruker::getBrukernavn)
                 .toList();

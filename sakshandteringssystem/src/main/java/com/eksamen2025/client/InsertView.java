@@ -3,6 +3,7 @@ package com.eksamen2025.client;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 import javafx.geometry.Insets;
@@ -81,19 +82,44 @@ public class InsertView {
             // Send forespørsel for å hente prioriteter
             out.writeObject("GET_PRIORITIES");
             out.flush();
-            List<String> prioriteter = (List<String>) in.readObject();
-            setPrioritetsvalg(prioriteter);
+            Object obj1 = in.readObject();
+            if (obj1 instanceof List<?>) {
+                 List<String> prioriteter = new ArrayList<>();
+            for (Object o : (List<?>) obj1) {
+                if (o instanceof String) {
+                    prioriteter.add((String) o);
+        }
+    }
+    setPrioritetsvalg(prioriteter);
+}
 
             // Send forespørsel for å hente kategorier
             out.writeObject("GET_CATEGORIES");
             out.flush();
-            List<String> kategorier = (List<String>) in.readObject();
-            setKategoriValg(kategorier);
+            Object obj2 = in.readObject();
+            if (obj2 instanceof List<?>) {
+                List<String> kategorier = new ArrayList<>();
+                for (Object o : (List<?>) obj2) {
+                    if (o instanceof String) {
+                     kategorier.add((String) o);
+        }
+    }
+    setKategoriValg(kategorier);
+}
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+     public void setDisable(boolean disabled) {
+    tfTitle.setDisable(disabled);
+    taDescription.setDisable(disabled);
+    cbPriority.setDisable(disabled);
+    cbCategory.setDisable(disabled);
+    btnSubmit.setDisable(disabled);
+}
+
 
     
 }
