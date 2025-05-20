@@ -10,7 +10,7 @@ import java.util.List;
 /** 
  * @author Jørgen
  * Klassen oppretter forbindelse med databasen for å hente kategorier, som er en egen tabell.
- * 
+ * Har en metode for å hente alle kategorier fra databasen.
  */
 
 public class KategoriDao {

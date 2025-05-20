@@ -7,16 +7,16 @@ import java.sql.Connection;
 
 import com.eksamen2025.SocketRequest;
 import com.eksamen2025.SocketResponse;
+import com.eksamen2025.database.DatabaseUtil;
 import com.eksamen2025.felles.Sak;
 import com.eksamen2025.server.dao.BrukerDao;
-import com.eksamen2025.server.dao.DatabaseUtil;
 import com.eksamen2025.server.dao.KategoriDao;
 import com.eksamen2025.server.dao.PrioritetDao;
 import com.eksamen2025.server.dao.SakDao;
 
 /**
  * SakBehandler-klassen: håndterer kommunikasjonen med en klient.
- * Den leser meldinger fra klienten og sender svar tilbake.
+ * 
  * @author Vibeke
  */
 
@@ -66,7 +66,8 @@ public void run() {
         }
         
     } catch (Exception e) {
-        e.printStackTrace();
+        // Kaster EOFException når klienten kobler fra. Vi har ikke funnet noen annen måte å håndtere dette på.
+        // Den har tilsynelatende ingen innvirkning på serverens drift.
     }
 }
     

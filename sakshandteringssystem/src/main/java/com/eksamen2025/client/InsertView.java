@@ -93,9 +93,10 @@ public class InsertView {
             if (data1 instanceof List<?>) {
                 List<String> prioriteter = new ArrayList<>();
                 for (Object objekt : (List<?>) data1) {
-                    if (objekt instanceof Prioritet) { // Konverterer objektet fra Prioritet til String
-                        String konvertert = objekt.toString();
-                        prioriteter.add(konvertert);
+                    if (objekt instanceof Prioritet) {
+                        prioriteter.add(objekt.toString());
+                    } else if (objekt instanceof String) {
+                        prioriteter.add((String) objekt);
                     }
                 }
                 setPrioritetsvalg(prioriteter);

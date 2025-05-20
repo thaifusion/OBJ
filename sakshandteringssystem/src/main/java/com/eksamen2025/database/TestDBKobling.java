@@ -1,13 +1,13 @@
-//Dette er en testfil for å teste database kobligen internt. 
-//Brukes for å teste kobling til MySQL databasen.
-//Monica A. Johansen
-
-package com.eksamen2025.server.dao;
+package com.eksamen2025.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.io.IOException;
 
+/** @author Monica
+ * Klassen fungerer som en test for å sjekke om vi klarer å koble til databasen.
+ * Den oppretter en forbindelse til databasen og skriver ut en melding om tilkoblingen var vellykket.
+ */
 public class TestDBKobling {
     public static void main(String[] args) {
         try (Connection conn = DatabaseUtil.getConnection()) {

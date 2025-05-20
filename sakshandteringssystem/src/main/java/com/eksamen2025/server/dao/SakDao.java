@@ -8,14 +8,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.sql.Types;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO for håndtering av Sak-objekter mot databasen.
+/** @author Jørgen
+ * Klassen oppretter forbindelse med databasen for å hente saker.
+ * Har metoder for å legge til saker og hente alle saker fra databasen.
  */
 public class SakDao {
 
@@ -27,7 +26,8 @@ public class SakDao {
 
     /**
      * Legger til en sak i databasen.
-     * Merk: id settes automatisk (AUTO_INCREMENT).
+     * id for saker er ikke med her fordi den blir automatisk inkrementert i databasen.
+     * @param sak Sak-objektet som skal legges til
      */
     public void leggTilSak(Sak sak) throws SQLException {
         String sql = "INSERT INTO sak (tittel, beskrivelse, prioritet_id, kategori_id, status_id, reporter_id, mottaker_id, opprettetTid, oppdatertTid, utviklerkommentar, testerTilbakemelding) " +
@@ -49,6 +49,8 @@ public class SakDao {
             stmt.setString(10, sak.getKommentar());
             stmt.setString(11, sak.getTilbakemelding());
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new SQLException("Feil ved innsetting av sak: " + e.getMessage(), e);
         }
     }
 
@@ -83,12 +85,18 @@ public class SakDao {
                         .bygg();
                 saker.add(sak);
             }
+        } catch (SQLException e) {
+            throw new SQLException("Feil ved henting av saker: " + e.getMessage(), e);
         }
         return saker;
     }
 
-    // Hjelpemetoder for å finne id-er basert på navn/enum
-
+    /**
+     * Henter ID til en prioritet basert på navnet.
+     * @param prioritet Prioritet-enum
+     * @return ID til prioriteten
+     * @throws SQLException hvis noe går galt med databasen
+     */
     private int hentPrioritetId(Prioritet prioritet) throws SQLException {
         String sql = "SELECT id FROM prioritet WHERE LOWER(navn) = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -100,6 +108,12 @@ public class SakDao {
         throw new SQLException("Fant ikke prioritet: " + prioritet);
     }
 
+    /**
+     * Henter ID til en kategori basert på navnet.
+     * @param kategori Kategorinavn
+     * @return ID til kategorien
+     * @throws SQLException hvis noe går galt med databasen
+     */
     private int hentKategoriId(String kategori) throws SQLException {
         String sql = "SELECT id FROM kategori WHERE navn = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -111,6 +125,12 @@ public class SakDao {
         throw new SQLException("Fant ikke kategori: " + kategori);
     }
 
+    /**
+     * Henter ID til en status basert på statuskoden.
+     * @param statusKode Statuskode
+     * @return ID til statusen
+     * @throws SQLException hvis noe går galt med databasen
+     */
     private int hentStatusId(String statusKode) throws SQLException {
         String sql = "SELECT id FROM status WHERE kode = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -122,6 +142,12 @@ public class SakDao {
         throw new SQLException("Fant ikke status: " + statusKode);
     }
 
+    /**
+     * Henter ID til en bruker basert på brukernavnet.
+     * @param brukernavn Brukernavn
+     * @return ID til brukeren
+     * @throws SQLException hvis noe går galt med databasen
+     */
     private int hentBrukerId(String brukernavn) throws SQLException {
         String sql = "SELECT id FROM bruker WHERE brukernavn = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
