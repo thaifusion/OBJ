@@ -3,7 +3,11 @@ package com.eksamen2025.client;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.eksamen2025.SocketRequest;
+import com.eksamen2025.SocketResponse;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -73,27 +77,55 @@ public class InsertView {
      * @param host IP-adresse eller vertsnavn til serveren.
      * @param port Portnummer som serveren lytter på.
      */
-    public void hentValgFraServer(String host, int port) {
-        try (Socket socket = new Socket(host, 3000);
+     public void hentValgFraServer(String host, int port) {
+        try (Socket socket = new Socket(host, port);
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-            // Send forespørsel for å hente prioriteter
-            out.writeObject("GET_PRIORITIES");
+            // --- Forespørsel: Prioriteter
+            SocketRequest req1 = new SocketRequest("GET_PRIORITIES", null, null);
+            out.writeObject(req1);
             out.flush();
-            List<String> prioriteter = (List<String>) in.readObject();
-            setPrioritetsvalg(prioriteter);
+            SocketResponse res1 = (SocketResponse) in.readObject();
 
-            // Send forespørsel for å hente kategorier
-            out.writeObject("GET_CATEGORIES");
+            Object data1 = res1.getResult();
+            if (data1 instanceof List<?>) {
+                List<String> prioriteter = new ArrayList<>();
+                for (Object o : (List<?>) data1) {
+                    if (o instanceof String) {
+                        prioriteter.add((String) o);
+                    }
+                }
+                setPrioritetsvalg(prioriteter);
+            }
+
+            // --- Forespørsel: Kategorier
+            SocketRequest req2 = new SocketRequest("GET_CATEGORIES", null, null);
+            out.writeObject(req2);
             out.flush();
-            List<String> kategorier = (List<String>) in.readObject();
-            setKategoriValg(kategorier);
+            SocketResponse res2 = (SocketResponse) in.readObject();
+
+            Object data2 = res2.getResult();
+            if (data2 instanceof List<?>) {
+                List<String> kategorier = new ArrayList<>();
+                for (Object o : (List<?>) data2) {
+                    if (o instanceof String) {
+                        kategorier.add((String) o);
+                    }
+                }
+                setKategoriValg(kategorier);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    
+    public void setDisable(boolean disabled) {
+        tfTitle.setDisable(disabled);
+        taDescription.setDisable(disabled);
+        cbPriority.setDisable(disabled);
+        cbCategory.setDisable(disabled);
+        btnSubmit.setDisable(disabled);
+    }
 }

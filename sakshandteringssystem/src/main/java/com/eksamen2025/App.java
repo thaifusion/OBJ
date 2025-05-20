@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.eksamen2025.client.InsertController;
 import com.eksamen2025.client.InsertView;
@@ -23,10 +24,10 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         // 1. Hent brukere (med navn + rolle) fra server
-        List<String> brukere = NetworkClient.hentBrukereFraServer();
+        List<Bruker> brukere = NetworkClient.hentBrukereFraServer();
         List<String> brukernavnListe = brukere.stream()
-                .map(Bruker::getBrukernavn)
-                .toList();
+        .map(Bruker::getBrukernavn)
+        .collect(Collectors.toList());
 
         // 2. Vis dialog for valg av brukernavn
         ChoiceDialog<String> dialog = new ChoiceDialog<>(

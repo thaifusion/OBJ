@@ -9,11 +9,23 @@ import java.util.List;
 
 import com.eksamen2025.SocketRequest;
 import com.eksamen2025.SocketResponse;
+import com.eksamen2025.felles.Bruker;
 import com.eksamen2025.felles.Sak;
 
 public class NetworkClient {
     private static String brukernavn;
     private static final int PORT = 3000;
+    private static Bruker aktivBruker;
+    
+
+    public static void setAktivBruker(Bruker bruker) {
+    aktivBruker = bruker;
+}
+
+public static String getBrukernavn() {
+    return aktivBruker != null ? aktivBruker.getBrukernavn() : "Anonymous";
+}
+
     public static void setBrukernavn(String navn) {
         brukernavn = navn;
     }
@@ -35,20 +47,39 @@ public class NetworkClient {
         }
     }
 
-    public static List<String> hentBrukereFraServer() {
-        try (Socket socket = new Socket("localhost", PORT);
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+    public static List<Bruker> hentBrukereFraServer() {
+    try (Socket socket = new Socket("localhost", PORT);
+         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-            SocketRequest req = new SocketRequest("HENT_BRUKERNAVN", null, null);
-            out.writeObject(req);
+        SocketRequest req = new SocketRequest("HENT_BRUKERE", null, null);
+        out.writeObject(req);
 
-            SocketResponse res = (SocketResponse) in.readObject();
-            return (List<String>) res.getResult();
+        SocketResponse res = (SocketResponse) in.readObject();
+        Object data = res.getResult();
 
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
+        if (data instanceof List<?>) {
+            List<?> list = (List<?>) data;
+            List<Bruker> brukere = new ArrayList<>();
+
+            for (Object obj : list) {
+                if (obj instanceof Bruker) {
+                    brukere.add((Bruker) obj);
+                }
+            }
+
+            return brukere;
         }
+
+    } catch (IOException | ClassNotFoundException e) {
+        e.printStackTrace();
     }
+
+    // Sørg for at du alltid returnerer noe!
+    return new ArrayList<>();
+}
+
+
+
+
 }

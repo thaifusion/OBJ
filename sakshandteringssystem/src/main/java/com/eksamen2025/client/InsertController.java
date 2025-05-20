@@ -14,7 +14,7 @@ import javafx.scene.control.Alert;
  */
 public class InsertController {
     private final InsertView view;
-    private final Rolle brukerRolle;
+    //private final Rolle brukerRolle;
 
     /**
      * Oppretter en ny InsertController og konfigurerer visningen basert på brukerens rolle.
@@ -24,7 +24,7 @@ public class InsertController {
      */
     public InsertController(InsertView view, Rolle brukerRolle) {
         this.view = view;
-        this.brukerRolle = brukerRolle;
+        //this.brukerRolle = brukerRolle;
 
         // Kun TESTER og LEDER har tilgang til å opprette saker
         if (brukerRolle != Rolle.TESTER && brukerRolle != Rolle.LEDER) {

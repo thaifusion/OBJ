@@ -1,12 +1,14 @@
 package com.eksamen2025.felles;
 
+import java.io.Serializable;
+
 /** @author Jørgen
  * Klassen representerer en bruker
  * 
  * 
  */
 
-public class Bruker {
+public class Bruker implements Serializable{
     
     private String brukernavn;
     private Rolle rolle;
