@@ -26,7 +26,7 @@ public class SakDao {
 
     /**
      * Legger til en sak i databasen.
-     * 
+     * Merk: id settes automatisk (AUTO_INCREMENT).
      */
     public void leggTilSak(Sak sak) throws SQLException {
         String sql = "INSERT INTO sak (tittel, beskrivelse, prioritet_id, kategori_id, status_id, reporter_id, mottaker_id, opprettetTid, oppdatertTid, utviklerkommentar, testerTilbakemelding) " +
