@@ -60,15 +60,15 @@ public static String getBrukernavn() {
 
         if (data instanceof List<?>) {
             List<?> list = (List<?>) data;
-            List<Bruker> brukere = new ArrayList<>();
+            List<Bruker> bruker = new ArrayList<>();
 
             for (Object obj : list) {
                 if (obj instanceof Bruker) {
-                    brukere.add((Bruker) obj);
+                    bruker.add((Bruker) obj);
                 }
             }
 
-            return brukere;
+            return bruker;
         }
 
     } catch (IOException | ClassNotFoundException e) {

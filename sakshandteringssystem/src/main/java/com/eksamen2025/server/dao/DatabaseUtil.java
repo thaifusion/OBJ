@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class DatabaseUtil {
-    private static final String CONFIG_FILE = "sakshandteringssystem/db.properties";
+    private static final String CONFIG_FILE = "sakshandteringssystem/src/main/java/com/eksamen2025/ressurser/db.properties";
 
     public static Connection getConnection() throws SQLException, IOException {
         Properties props = new Properties();
