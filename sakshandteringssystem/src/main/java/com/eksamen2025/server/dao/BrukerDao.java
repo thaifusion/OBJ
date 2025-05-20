@@ -11,6 +11,12 @@ import java.util.List;
 import com.eksamen2025.felles.Bruker;
 import com.eksamen2025.felles.Rolle;
 
+
+/** @author Jørgen
+ *  Klassen oppretter forbindelse til databasen for brukere. 
+ *  Metoder for å hente alle brukere, samt legge til nye.
+ * 
+ */
 public class BrukerDao {
     
     private final Connection conn;
