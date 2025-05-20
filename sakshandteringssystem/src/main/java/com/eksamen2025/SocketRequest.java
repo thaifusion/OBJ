@@ -2,27 +2,32 @@ package com.eksamen2025;
 
 import java.io.Serializable;
 
+/**
+ * SocketRequest: En forespørsel sendt fra klienten til serveren.
+ * Inneholder type handling, eventuelle data (f.eks. en Sak), og hvem som sendte det.
+ */
 public class SocketRequest implements Serializable {
-    private String action;
-    private Object payload;
-    private String sender;
+    private static final long serialVersionUID = 1L;
 
-    public SocketRequest(String action, Object payload, String sender) {
-        this.action = action;
-        this.payload = payload;
-        this.sender = sender;
+    private String type;
+    private Object data;
+    private String brukernavn;
+
+    public SocketRequest(String type, Object data, String brukernavn) {
+        this.type = type;
+        this.data = data;
+        this.brukernavn = brukernavn;
     }
 
-    public String getAction() {
-        return action;
+    public String getType() {
+        return type;
     }
 
-    public Object getPayload() {
-        return payload;
+    public Object getData() {
+        return data;
     }
 
-    public String getSender() {
-        return sender;
+    public String getBrukernavn() {
+        return brukernavn;
     }
 }
-
