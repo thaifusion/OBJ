@@ -14,3 +14,6 @@
 # Backup-filer
 *.swp
 *.tmp
+
+#Databasefiler 
+db.properties

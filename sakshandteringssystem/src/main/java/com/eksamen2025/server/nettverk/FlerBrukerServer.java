@@ -1,5 +1,8 @@
 package com.eksamen2025.server.nettverk;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import com.eksamen2025.server.dao.DatabaseUtil;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,6 +23,18 @@ public class FlerBrukerServer {
     private static ExecutorService trådbehandler = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
+
+        //Koble serveren til databasen 
+
+        try (Connection conn = DatabaseUtil.getConnection()) {
+            if (conn != null) {
+                System.out.println("Databasen er koblet til.");
+            }
+        } catch (SQLException | IOException e) {
+            System.out.println("Feil ved tilkobling til databasen: " + e.getMessage());
+            return;
+        }
+        
         
         // Åpner opp en server socket på port 3000 og lytter etter tilkoblinger
         try (ServerSocket lytter = new ServerSocket(PORT)) {
