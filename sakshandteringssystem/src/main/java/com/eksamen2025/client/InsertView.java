@@ -17,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /** @author Ranem
@@ -30,6 +31,9 @@ public class InsertView {
     public ComboBox<String> cbPriority = new ComboBox<>();
     public ComboBox<String> cbCategory = new ComboBox<>();
     public Button btnSubmit = new Button("Send inn sak");
+
+    public Button btnVisSaker = new Button("Vis mine saker");
+
     
     /**
      * 
@@ -48,9 +52,11 @@ public class InsertView {
         grid.add(cbPriority, 1, 2);
         grid.add(new Label("Kategori:"), 0, 3);
         grid.add(cbCategory, 1, 3);
-        grid.add(btnSubmit, 1, 4);
-
-        VBox layout = new VBox(15, grid);
+        //grid.add(btnSubmit, 1, 4);
+        HBox knapper = new HBox(10, btnSubmit, btnVisSaker);
+        VBox layout = new VBox(15, grid, knapper);
+        //VBox layout = new VBox(15, grid);
+        //layout.setPadding(new Insets(20));
         layout.setPadding(new Insets(20));
         return layout;
     }
@@ -130,4 +136,17 @@ public class InsertView {
         cbCategory.setDisable(disabled);
         btnSubmit.setDisable(disabled);
     }
+
+    /**
+ * Deaktiverer kun skjema-feltene og "Send inn"-knappen,
+ * men lar andre knapper (som "Vis mine saker") være aktiv.
+ */
+public void deaktiverSkjemaFelter() {
+    tfTitle.setDisable(true);
+    taDescription.setDisable(true);
+    cbPriority.setDisable(true);
+    cbCategory.setDisable(true);
+    btnSubmit.setDisable(true);
+}
+
 }
