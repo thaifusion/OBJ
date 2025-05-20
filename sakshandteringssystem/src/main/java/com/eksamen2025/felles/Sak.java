@@ -91,6 +91,134 @@ public class Sak {
 
     /**
      * 
+     * @param kategori
+     */
+    public void setKategori(String kategori) {
+        this.kategori = kategori;
+    }
+
+    /**
+     * 
+     * @return kategori
+     */
+    public String getKategori() {
+        return kategori;
+    }
+
+    /**
+     * 
+     * @param status
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * 
+     * @return status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * 
+     * @param innsender
+     */
+    public void setInnsender(String innsender) {
+        this.innsender = innsender;
+    }
+
+    /**
+     * 
+     * @return innsender
+     */
+    public String getInnsender() {
+        return innsender;
+    }
+
+    /**
+     * 
+     * @param mottaker
+     */
+    public void setMottaker(String mottaker) {
+        this.mottaker = mottaker;
+    }
+
+    /**
+     * 
+     * @return mottaker
+     */
+    public String getMottaker() {
+        return mottaker;
+    }
+
+    /**
+     * 
+     * @param opprettet
+     */
+    public void setOpprettet(LocalDate opprettet) {
+        this.opprettet = opprettet;
+    }
+
+    /**
+     * 
+     * @return opprettet
+     */
+    public LocalDate getOpprettet() {
+        return opprettet;
+    }
+
+    /**
+     * 
+     * @param oppdatert
+     */
+    public void setOppdatert(LocalDate oppdatert) {
+        this.oppdatert = oppdatert;
+    }
+
+    /**
+     * 
+     * @return oppdatert
+     */
+    public LocalDate getOppdatert() {
+        return oppdatert;
+    }
+
+    /**
+     * 
+     * @param kommentar
+     */
+    public void setKommentar(String kommentar) {
+        this.kommentar = kommentar;
+    }
+
+    /**
+     * 
+     * @return kommentar
+     */
+    public String getKommentar() {
+        return kommentar;
+    }
+
+    /**
+     * 
+     * @param tilbakemelding
+     */
+    public void setTilbakemelding(String tilbakemelding) {
+        this.tilbakemelding = tilbakemelding;
+    }
+    
+    /**
+     * 
+     * @return tilbakemelding
+     */
+    public String getTilbakemelding() {
+        return tilbakemelding;
+    }
+
+    /**
+     * 
      * @return String-representasjon av en sak
      */
     @Override

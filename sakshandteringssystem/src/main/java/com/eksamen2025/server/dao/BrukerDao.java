@@ -20,7 +20,7 @@ import com.eksamen2025.felles.Rolle;
 public class BrukerDao {
     
     private final Connection conn;
-    private List<Bruker> brukere = new ArrayList<>();
+    private List<Bruker> bruker = new ArrayList<>();
     private String brukernavn;
     private String rolleString;
 
@@ -47,11 +47,11 @@ public class BrukerDao {
                 brukernavn = rs.getString("Brukernavn");
                 rolleString = rs.getString("Rolle");
                 Rolle rolle = Rolle.valueOf(rolleString.toUpperCase());
-                brukere.add(new Bruker(brukernavn, rolle));
+                bruker.add(new Bruker(brukernavn, rolle));
             }
         }
 
-        return brukere;
+        return bruker;
     }
 
     /**
