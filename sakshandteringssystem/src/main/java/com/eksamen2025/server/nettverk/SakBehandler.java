@@ -1,12 +1,15 @@
 package com.eksamen2025.server.nettverk;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
+
+/**
+ * SakBehandler-klassen: håndterer kommunikasjonen med en klient.
+ * Den leser meldinger fra klienten og sender svar tilbake.
+ * @author Vibeke
+ */
 
 public class SakBehandler implements Runnable {
     private Socket socket;
@@ -17,17 +20,21 @@ public class SakBehandler implements Runnable {
 
     public void run() {
         try {
-            InputStream inn = socket.getInputStream();
-            BufferedReader leser = new BufferedReader(new InputStreamReader(inn));
 
-            OutputStream ut = socket.getOutputStream();
-            PrintWriter skriver = new PrintWriter(ut, true);
+            ObjectOutputStream ut = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream inn = new ObjectInputStream(socket.getInputStream());
 
-            String melding = leser.readLine();
-            System.out.println("Mottatt melding: " + melding);
+
+            Object mottatt = inn.readObject();
+            System.out.println("Motatt objektet: " + mottatt);
+
+            // For å snede et svar tilbake til klienten
+            String svar = "Server har mottatt objektet";
+            ut.writeObject(svar);
+            
 
             socket.close();
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             System.out.println("Feil under behandling av melding: " + e.getMessage());
             e.printStackTrace();
         }
