@@ -15,6 +15,17 @@ import com.eksamen2025.felles.Sak;
 public class NetworkClient {
     private static String brukernavn;
     private static final int PORT = 3000;
+    private static Bruker aktivBruker;
+    
+
+    public static void setAktivBruker(Bruker bruker) {
+    aktivBruker = bruker;
+}
+
+public static String getBrukernavn() {
+    return aktivBruker != null ? aktivBruker.getBrukernavn() : "Anonymous";
+}
+
     public static void setBrukernavn(String navn) {
         brukernavn = navn;
     }
@@ -69,14 +80,6 @@ public class NetworkClient {
 }
 
 
-    private static Bruker aktivBruker;
 
-public static void setAktivBruker(Bruker bruker) {
-    aktivBruker = bruker;
-}
-
-public static String getBrukernavn() {
-    return aktivBruker != null ? aktivBruker.getBrukernavn() : "Anonymous";
-}
 
 }

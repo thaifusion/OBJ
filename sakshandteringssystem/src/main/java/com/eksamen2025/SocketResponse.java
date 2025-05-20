@@ -2,15 +2,19 @@ package com.eksamen2025;
 
 import java.io.Serializable;
 
+/**
+ * SocketResponse: Et svar sendt fra serveren til klienten.
+ * Inneholder informasjon om suksess og eventuelle resultater (eller feilmelding).
+ */
 public class SocketResponse implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private boolean success;
     private Object result;
-    private String message;
 
-    public SocketResponse(boolean success, Object result, String message) {
+    public SocketResponse(boolean success, Object result) {
         this.success = success;
         this.result = result;
-        this.message = message;
     }
 
     public boolean isSuccess() {
@@ -20,9 +24,4 @@ public class SocketResponse implements Serializable {
     public Object getResult() {
         return result;
     }
-
-    public String getMessage() {
-        return message;
-    }
 }
-

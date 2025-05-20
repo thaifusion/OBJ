@@ -25,8 +25,8 @@ public class App extends Application {
         // 1. Hent brukere (med navn + rolle) fra server
         List<Bruker> brukere = NetworkClient.hentBrukereFraServer();
         List<String> brukernavnListe = brukere.stream()
-                .map(Bruker::getBrukernavn)
-                .toList();
+        .map(Bruker::getBrukernavn)
+        .toList();
 
         // 2. Vis dialog for valg av brukernavn
         ChoiceDialog<String> dialog = new ChoiceDialog<>(
