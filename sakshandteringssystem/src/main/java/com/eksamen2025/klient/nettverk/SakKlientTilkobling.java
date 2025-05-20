@@ -61,7 +61,7 @@ public class SakKlientTilkobling {
     }
 
 
-    // Lager en main - kun for å sjekke om det er connection!
+    // Lager en main - KUN for å sjekke om det er connection!
     public static void main(String[] args) {
         SakKlientTilkobling klient = new SakKlientTilkobling();
         klient.svarForespørsel();
