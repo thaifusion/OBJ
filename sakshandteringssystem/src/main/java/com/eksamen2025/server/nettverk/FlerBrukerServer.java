@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
  */
 
 public class FlerBrukerServer {
-    private static final int PORT = 3000;
+    private static final int PORT = 3001;
     private static ExecutorService trådbehandler = Executors.newCachedThreadPool();
 
     public static void main(String[] args) {
