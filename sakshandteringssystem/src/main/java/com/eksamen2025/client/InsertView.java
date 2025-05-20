@@ -1,4 +1,3 @@
-
 package com.eksamen2025.client;
 
 import java.io.ObjectInputStream;
@@ -15,14 +14,22 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
-//klasse som lager brukergrensesnitt for å sende inn sak
+/** @author Ranem
+ * Klassen InsertView bygger opp brukergrensesnittet for å sende inn en ny sak.
+ * Den inneholder felter for tittel, beskrivelse, prioritet og kategori, samt en knapp for innsending.
+ * Den henter også gyldige valg for prioritet og kategori fra serveren.
+ */
 public class InsertView {
     public TextField tfTitle = new TextField();
     public TextArea taDescription = new TextArea();
     public ComboBox<String> cbPriority = new ComboBox<>();
     public ComboBox<String> cbCategory = new ComboBox<>();
     public Button btnSubmit = new Button("Send inn sak");
-
+    
+    /**
+     * 
+     * @return GUI-komponenten feltene og knappen
+     */
     public VBox getView() {
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -43,28 +50,41 @@ public class InsertView {
         return layout;
     }
 
-    //Disse metodene brukes for å sette verdier dynamisk (kalles etter data er hentet fra server)
+    /**
+     *
+     * @param prioriteter Liste hentet fra serveren.
+     */
     public void setPrioritetsvalg(List<String> prioriteter) {
         cbPriority.getItems().setAll(prioriteter);
     }
-
+    
+    /**
+     *
+     * @param kategorier Liste hentet fra serveren.
+     */
     public void setKategoriValg(List<String> kategorier) {
         cbCategory.getItems().setAll(kategorier);
     }
 
-    // Metode for å hente prioritet og kategori fra serveren
+    /**
+    * Henter valg for prioritet og kategori fra serveren via sockets,
+     * og setter disse i nedtrekkslistene.
+     *
+     * @param host IP-adresse eller vertsnavn til serveren.
+     * @param port Portnummer som serveren lytter på.
+     */
     public void hentValgFraServer(String host, int port) {
-        try (Socket socket = new Socket(host, port);
+        try (Socket socket = new Socket(host, 3000);
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-            //Hent prioriteter
+            // Send forespørsel for å hente prioriteter
             out.writeObject("GET_PRIORITIES");
             out.flush();
             List<String> prioriteter = (List<String>) in.readObject();
             setPrioritetsvalg(prioriteter);
 
-            // Hent kategorier
+            // Send forespørsel for å hente kategorier
             out.writeObject("GET_CATEGORIES");
             out.flush();
             List<String> kategorier = (List<String>) in.readObject();
@@ -74,4 +94,6 @@ public class InsertView {
             e.printStackTrace();
         }
     }
+
+    
 }

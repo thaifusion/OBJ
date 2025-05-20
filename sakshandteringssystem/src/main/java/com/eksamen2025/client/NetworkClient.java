@@ -9,17 +9,17 @@ import java.util.List;
 
 import com.eksamen2025.SocketRequest;
 import com.eksamen2025.SocketResponse;
-import com.eksamen2025.model.Sak;
+import com.eksamen2025.felles.Sak;
 
 public class NetworkClient {
     private static String brukernavn;
-
+    private static final int PORT = 3000;
     public static void setBrukernavn(String navn) {
         brukernavn = navn;
     }
 
     public static boolean sendSak(Sak sak) {
-        try (Socket socket = new Socket("localhost", 3000);
+        try (Socket socket = new Socket("localhost", PORT);
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
@@ -35,8 +35,8 @@ public class NetworkClient {
         }
     }
 
-    public static List<String> hentBrukernavnFraServer() {
-        try (Socket socket = new Socket("localhost", 5000);
+    public static List<String> hentBrukereFraServer() {
+        try (Socket socket = new Socket("localhost", PORT);
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
