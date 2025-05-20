@@ -7,7 +7,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Server-klassen: oppretter en server for å kunne håndtere flere forespørsler fra ulike
+ * Hovedserver-klassen: oppretter en server og åpner en ServerSocket på port 3000 og
+ * for skal kunne håndtere flere forespørsler fra ulike
  * brukere samtidig. Dette gjøres med ExecutorService og newCatchedThreadPool, for å unngå
  * trådbelastning - og som oppretter tråder etter behov og kan gjenbrukes.
  * @author Vibeke

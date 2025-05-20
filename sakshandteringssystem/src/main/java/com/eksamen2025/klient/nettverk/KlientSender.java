@@ -2,6 +2,15 @@ package com.eksamen2025.klient.nettverk;
 
 import java.io.ObjectOutputStream;
 
+/**
+ * KlientSender-klassen: håndterer sending av forespørsel til serveren.
+ * 
+ * Brukes til å sende objekter via ObjectOutputStream - som brukere, forespørsler og svar - til serveren.
+ * Objektet må implementere Serializable for å kunne sendes
+ * 
+ * @author Vibeke
+*/ 
+
 public class KlientSender {
 
     private ObjectOutputStream objektUt;

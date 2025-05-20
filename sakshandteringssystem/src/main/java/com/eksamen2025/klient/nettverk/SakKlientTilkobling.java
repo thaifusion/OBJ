@@ -5,9 +5,13 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
- * Klient-klassen: oppretter en socket for å kommunisere med serveren.
- * Klienten kan sende forespørsel til serveren og motta svar.
+ * 
+ * Klient-klassen: oppretter en socket for å kommunisere med serveren på localhost: 3000.
+ * Klienten kan sende og motta objekter.
  * Klienten kan også lukke tilkoblingen når den ikke lenger er nødvendig.
+ * 
+ * Hjelpeklasse for å håndtere tilkoblingen til serveren.
+ * Den oppretter en socket og sender forespørselen til serveren.
  * @author Vibeke
  */
 
