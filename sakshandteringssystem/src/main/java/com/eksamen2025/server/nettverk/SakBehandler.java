@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import com.eksamen2025.SocketResponse;
+
 /**
  * SakBehandler-klassen: håndterer kommunikasjonen med en klient.
  * Den leser meldinger fra klienten og sender svar tilbake.
@@ -29,7 +31,7 @@ public class SakBehandler implements Runnable {
             System.out.println("Motatt objektet: " + mottatt);
 
             // For å snede et svar tilbake til klienten
-            String svar = "Server har mottatt objektet";
+            SocketResponse svar = new SocketResponse(true, "Server har mottatt objektet");
             ut.writeObject(svar);
             
 

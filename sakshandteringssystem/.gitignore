@@ -1,2 +1,19 @@
-sakshandteringssystem/db.properties
+# Byggfiler fra Maven
+/target/
+
+# IntelliJ IDEA-filer
+.idea/
+*.iml
+
+# OS-spesifikke filer
+.DS_Store
+
+# Loggfiler
+*.log
+
+# Backup-filer
+*.swp
+*.tmp
+
+#Databasefiler 
 db.properties
