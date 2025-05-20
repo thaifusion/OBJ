@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.eksamen2025.SocketRequest;
 import com.eksamen2025.SocketResponse;
+import com.eksamen2025.felles.Prioritet;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -91,9 +92,10 @@ public class InsertView {
             Object data1 = res1.getResult();
             if (data1 instanceof List<?>) {
                 List<String> prioriteter = new ArrayList<>();
-                for (Object o : (List<?>) data1) {
-                    if (o instanceof String) {
-                        prioriteter.add((String) o);
+                for (Object objekt : (List<?>) data1) {
+                    if (objekt instanceof Prioritet) { // Konverterer objektet fra Prioritet til String
+                        String konvertert = objekt.toString();
+                        prioriteter.add(konvertert);
                     }
                 }
                 setPrioritetsvalg(prioriteter);

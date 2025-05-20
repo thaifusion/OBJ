@@ -36,6 +36,8 @@ public void run() {
         Connection conn = DatabaseUtil.getConnection();
     )   {
             Object mottatt;
+
+
             while ((mottatt = inn.readObject()) != null) {
                 if (mottatt instanceof SocketRequest) {
                 SocketRequest req = (SocketRequest) mottatt;
