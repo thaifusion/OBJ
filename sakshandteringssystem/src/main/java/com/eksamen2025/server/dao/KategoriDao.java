@@ -7,9 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO for håndtering av Kategori-objekter mot databasen.
+/** 
+ * @author Jørgen
+ * Klassen oppretter forbindelse med databasen for å hente kategorier, som er en egen tabell.
+ * 
  */
+
 public class KategoriDao {
 
     private final Connection conn;

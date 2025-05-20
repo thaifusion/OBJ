@@ -55,8 +55,7 @@ public class App extends Application {
         new InsertController(view, valgtBruker.getRolle());
 
         Scene scene = new Scene(view.getView());
-        stage.setTitle("Sakshåndteringssystem - Innlogget som: " +
-                valgtBruker.getBrukernavn() + " (" + valgtBruker.getRolle() + ")");
+        stage.setTitle("Sakshåndteringssystem - Innlogget som: " + valgtBruker.getBrukernavn() + " (" + valgtBruker.getRolle() + ")");
         stage.setScene(scene);
         stage.setWidth(800);
         stage.setHeight(600);

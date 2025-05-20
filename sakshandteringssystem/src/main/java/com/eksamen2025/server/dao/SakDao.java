@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -43,8 +44,8 @@ public class SakDao {
             } else {
                 stmt.setNull(7, Types.INTEGER);
             }
-            stmt.setDate(8, sak.getOpprettet() != null ? Date.valueOf(sak.getOpprettet()) : null);
-            stmt.setDate(9, sak.getOppdatert() != null ? Date.valueOf(sak.getOppdatert()) : null);
+            stmt.setTimestamp(8, sak.getOpprettet());
+            stmt.setTimestamp(9, sak.getOppdatert());
             stmt.setString(10, sak.getKommentar());
             stmt.setString(11, sak.getTilbakemelding());
             stmt.executeUpdate();
@@ -75,8 +76,8 @@ public class SakDao {
                         .status(rs.getString("statusKode"))
                         .innsender(rs.getString("reporterNavn"))
                         .mottaker(rs.getString("mottakerNavn"))
-                        .opprettet(rs.getDate("opprettetTid") != null ? rs.getDate("opprettetTid").toLocalDate() : null)
-                        .oppdatert(rs.getDate("oppdatertTid") != null ? rs.getDate("oppdatertTid").toLocalDate() : null)
+                        .opprettet(rs.getTimestamp("opprettetTid"))
+                        .oppdatert(rs.getTimestamp("oppdatertTid"))
                         .kommentar(rs.getString("utviklerkommentar"))
                         .tilbakemelding(rs.getString("testerTilbakemelding"))
                         .bygg();
