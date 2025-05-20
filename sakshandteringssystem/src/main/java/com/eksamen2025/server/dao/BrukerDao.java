@@ -82,7 +82,7 @@ public class BrukerDao {
         String sql = "INSERT INTO brukere (Brukernavn, Rolle) VALUES (?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, bruker.getBrukernavn());
-            stmt.setString(2, bruker.getRolle().name()); //.name() for å konvertere Rolle-enumobjekt til String
+            stmt.setString(2, bruker.getRolle().toString()); //.toString for å konvertere Rolle-enumobjekt til String
             stmt.executeUpdate();
         }
     }

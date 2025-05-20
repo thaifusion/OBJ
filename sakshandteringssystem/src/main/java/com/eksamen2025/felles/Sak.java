@@ -1,5 +1,6 @@
 package com.eksamen2025.felles;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 /** @author Jørgen
@@ -7,7 +8,7 @@ import java.time.LocalDate;
  * 
  * 
  */
-public class Sak {
+public class Sak implements Serializable{
     private String id;
     private String tittel;
     private String beskrivelse;
