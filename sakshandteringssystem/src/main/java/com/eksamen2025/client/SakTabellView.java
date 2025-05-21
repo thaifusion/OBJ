@@ -246,9 +246,10 @@ private void oppdaterValgtSak() {
         return;
     }
 
-    // Tester får bare oppdatere egne saker
-    if (aktivBruker.getRolle() == Rolle.TESTER &&
-        !valgt.getInnsender().equals(aktivBruker.getBrukernavn())) {
+    Rolle rolle = aktivBruker.getRolle();
+
+    // ✅ Testere kan bare oppdatere egne saker
+    if (rolle == Rolle.TESTER && !valgt.getInnsender().equals(aktivBruker.getBrukernavn())) {
         new Alert(Alert.AlertType.WARNING, "Testere kan bare oppdatere egne saker.").showAndWait();
         return;
     }
@@ -258,26 +259,25 @@ private void oppdaterValgtSak() {
     dialog.setHeaderText("Endre status og legg inn kommentar");
 
     ComboBox<String> cbNyStatus = new ComboBox<>();
-    if (aktivBruker.getRolle() == Rolle.TESTER) {
-        cbNyStatus.getItems().setAll("RESOLVED", "TEST_FAILED");
-    } else if (aktivBruker.getRolle() == Rolle.UTVIKLER) {
-        cbNyStatus.getItems().setAll("IN_PROGRESS", "FIXED");
-    } else if (aktivBruker.getRolle() == Rolle.LEDER) {
-        cbNyStatus.getItems().setAll("ASSIGNED", "CLOSED", "SUBMITTED");
+    if (rolle == Rolle.TESTER) {
+        cbNyStatus.getItems().addAll("RESOLVED", "TEST_FAILED");
+    } else if (rolle == Rolle.UTVIKLER) {
+        cbNyStatus.getItems().addAll("IN_PROGRESS", "FIXED");
+    } else if (rolle == Rolle.LEDER) {
+        cbNyStatus.getItems().addAll("ASSIGNED", "CLOSED", "SUBMITTED");
     }
     cbNyStatus.setValue(valgt.getStatus());
 
     TextArea kommentarFelt = new TextArea();
-    kommentarFelt.setPromptText("Skriv kommentar eller tilbakemelding");
+    kommentarFelt.setPromptText("Skriv " + (rolle == Rolle.TESTER ? "tilbakemelding" : "kommentar"));
     kommentarFelt.setPrefRowCount(4);
 
-    VBox vbox = new VBox(10, new Label("Ny status:"), cbNyStatus,
-                              new Label("Kommentar:"), kommentarFelt);
+    VBox vbox = new VBox(10,
+            new Label("Ny status:"), cbNyStatus,
+            new Label(rolle == Rolle.TESTER ? "Tilbakemelding:" : "Kommentar:"), kommentarFelt);
 
     ComboBox<String> cbMottaker = null;
-
-    // Hvis leder – legg til felt for mottaker
-    if (aktivBruker.getRolle() == Rolle.LEDER) {
+    if (rolle == Rolle.LEDER) {
         cbMottaker = new ComboBox<>();
         cbMottaker.getItems().setAll(NetworkClient.hentUtviklere());
         cbMottaker.setValue(valgt.getMottaker());
@@ -287,20 +287,27 @@ private void oppdaterValgtSak() {
     dialog.getDialogPane().setContent(vbox);
     dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-    ComboBox<String> finalCbMottaker = cbMottaker;
+    final ComboBox<String> finalCbMottaker = cbMottaker;
 
     dialog.showAndWait().ifPresent(type -> {
         if (type == ButtonType.OK) {
             valgt.setStatus(cbNyStatus.getValue());
             valgt.setOppdatert(LocalDate.now());
 
-            if (aktivBruker.getRolle() == Rolle.TESTER) {
-                valgt.setTilbakemelding(kommentarFelt.getText());
-            } else if (aktivBruker.getRolle() == Rolle.UTVIKLER) {
-                valgt.setKommentar(kommentarFelt.getText());
-            } else if (aktivBruker.getRolle() == Rolle.LEDER && finalCbMottaker != null) {
-                valgt.setKommentar(kommentarFelt.getText());
-                valgt.setMottaker(finalCbMottaker.getValue());
+            // ✅ Klassisk switch uten ->
+            switch (rolle) {
+                case TESTER:
+                    valgt.setTilbakemelding(kommentarFelt.getText());
+                    break;
+                case UTVIKLER:
+                    valgt.setKommentar(kommentarFelt.getText());
+                    break;
+                case LEDER:
+                    valgt.setKommentar(kommentarFelt.getText());
+                    if (finalCbMottaker != null) {
+                        valgt.setMottaker(finalCbMottaker.getValue());
+                    }
+                    break;
             }
 
             boolean ok = NetworkClient.oppdaterSak(valgt);
@@ -313,7 +320,6 @@ private void oppdaterValgtSak() {
         }
     });
 }
-
 
 
 

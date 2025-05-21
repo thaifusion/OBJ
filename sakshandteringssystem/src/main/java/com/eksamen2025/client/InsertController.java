@@ -2,60 +2,56 @@ package com.eksamen2025.client;
 
 import com.eksamen2025.felles.Rolle;
 import com.eksamen2025.felles.Sak;
-
-import java.time.LocalDate;
-
 import com.eksamen2025.felles.Prioritet;
 
+import java.time.LocalDate;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 /** @author Ranem
- * Kontrollerklasse for InsertView.
- * Håndterer innsending av sak og tilgangskontroll basert på brukerens rolle.
+ * Kontrollerklasse håndterer sending av ny status
+ * tilgangskontroll og visuell tilbakemelding
  */
 public class InsertController {
     private final InsertView view;
-    //private final Rolle brukerRolle;
-
+ 
     /**
-     * Oppretter en ny InsertController og konfigurerer visningen basert på brukerens rolle.
+     * konstruktør for klassen
      *
-     * @param view        GUI-komponenten som inneholder skjemaet.
-     * @param brukerRolle Brukerens rolle (f.eks. TESTER, LEDER).
+     * @param view        
+     * @param brukerRolle
      */
     public InsertController(InsertView view, Rolle brukerRolle) {
-        this.view = view;
-        //this.brukerRolle = brukerRolle;
+        this.view= view;
         attachEvents();
-        // Kun TESTER og LEDER har tilgang til å opprette saker
+        // tester og leder kan opprette ny sak
         if (brukerRolle != Rolle.TESTER && brukerRolle != Rolle.LEDER) {
             view.deaktiverSkjemaFelter();
             showAlert("Du har ikke tilgang til å opprette saker.");
             return;
         }
-
-        //attachEvents();
+   
     }
     
     /**
-     * Knytter event-handler til "Send inn"-knappen i visningen.
+     * Knytter event-handler til "Send inn"-knappen for innsending sak
+     * og "Vis mine saker" knappen for å bytte til tabellvisning
      */
     private void attachEvents() {
         view.btnSubmit.setOnAction(e -> handleLagre());
-
-        view.btnVisSaker.setOnAction(e -> {
-        SakTabellView tabellView = new SakTabellView(NetworkClient.getAktivBruker());
-        Scene tabellScene = new Scene(tabellView.getView(), 800, 600);
-        Stage stage = (Stage) view.btnVisSaker.getScene().getWindow();
-        stage.setScene(tabellScene);
-    });
+        view.btnVisSaker.setOnAction(e ->{
+            SakTabellView tabellView = new SakTabellView(NetworkClient.getAktivBruker());
+            Scene tabellScene = new Scene(tabellView.getView(),800,600);
+            Stage stage = (Stage) view.btnVisSaker.getScene().getWindow();
+            stage.setScene(tabellScene);
+        });
     }
 
     /**
-     * Håndterer lagring (innsending) av sak.
+     * Håndterer innsending av sak
      * Validerer input, bygger en Sak og sender den til serveren.
+     * viser en dialog
      */
     private void handleLagre() {
         String tittel = view.tfTitle.getText();
@@ -85,10 +81,11 @@ public class InsertController {
                 .innsender(NetworkClient.getBrukernavn())
                 .opprettet(LocalDate.now())
                 .oppdatert(LocalDate.now())
-                .kommentar("")        // tom ved innsending
-                .tilbakemelding("")   // tom ved innsending
+                .kommentar("")        // tom
+                .tilbakemelding("")   // tom
                 .bygg();
 
+        
         boolean success = NetworkClient.sendSak(sak);
 
         if (success) {
@@ -100,7 +97,7 @@ public class InsertController {
     }
     
     /**
-     * Tømmer alle feltene i skjemaet.
+     * Tømmer alle feltene
      */
     private void clearForm() {
         view.tfTitle.clear();
@@ -110,13 +107,12 @@ public class InsertController {
     }
     
     /**
-     * Viser en informasjonsdialog til brukeren.
-     *
-     * @param msg Meldingen som skal vises i dialogen.
+     * Melding til brukeren
+     * @param msg 
      */
     private void showAlert(String msg) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setContentText(msg);
         alert.showAndWait();
-    }
+        }
 }
