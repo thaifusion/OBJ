@@ -52,6 +52,8 @@ public class SakTabellView {
     private ComboBox<String> cbStatus = new ComboBox<>();
     private TextField tfTittelSok = new TextField();
     private TextField tfBeskrivelseSok = new TextField();
+    private TextField tfStartÅr = new TextField();
+    private TextField tfSluttÅr = new TextField();
 
 
     public SakTabellView(Bruker bruker) {
@@ -179,6 +181,26 @@ public class SakTabellView {
         .filter(s -> cbStatus.getValue() == null || s.getStatus().equalsIgnoreCase(cbStatus.getValue()))
         .filter(s -> tfTittelSok.getText().isEmpty() || s.getTittel().toLowerCase().contains(tfTittelSok.getText().toLowerCase()))
         .filter(s -> tfBeskrivelseSok.getText().isEmpty() || s.getBeskrivelse().toLowerCase().contains(tfBeskrivelseSok.getText().toLowerCase()))
+        .filter(s -> {
+            if (tfStartÅr.getText().isEmpty()) return true;
+            // Legger inn en sjekk på at bruker skriver inn et tall i år-feltet
+            // Det vil bli ignorert hvis det er bokstaver eller ugyldig tall!
+            try {
+                int start = Integer.parseInt(tfStartÅr.getText());
+                return s.getOpprettet().toLocalDateTime().getYear() >= start;
+            } catch (NumberFormatException e) {
+                return true; 
+            }
+        })
+        .filter(s -> {
+            if (tfSluttÅr.getText().isEmpty()) return true;
+            try {
+                int slutt = Integer.parseInt(tfSluttÅr.getText());
+                return s.getOpprettet().toLocalDateTime().getYear() <= slutt;
+            } catch (NumberFormatException e) {
+                return true;
+            }
+        })
         .collect(Collectors.toList());
 
     tabell.setItems(FXCollections.observableArrayList(filtrert));
@@ -241,11 +263,13 @@ private HBox byggFilterpanel() {
     cbStatus.setPromptText("Status");
     tfTittelSok.setPromptText("Søk tittel");
     tfBeskrivelseSok.setPromptText("Søk beskrivelse");
+    tfStartÅr.setPromptText("Startår");
+    tfSluttÅr.setPromptText("Sluttår");
 
     Button btnFiltrer = new Button("Søk");
     btnFiltrer.setOnAction(e -> filtrerTabell());
 
-    return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, btnFiltrer);
+    return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, tfStartÅr, tfSluttÅr ,btnFiltrer);
 }
 
 
