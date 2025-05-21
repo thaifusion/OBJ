@@ -1,7 +1,5 @@
 package com.eksamen2025.server.nettverk;
 
-import java.io.EOFException;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -36,8 +34,6 @@ public void run() {
         Connection conn = DatabaseUtil.getConnection();
     )   {
             Object mottatt;
-
-
             while ((mottatt = inn.readObject()) != null) {
                 if (mottatt instanceof SocketRequest) {
                 SocketRequest req = (SocketRequest) mottatt;

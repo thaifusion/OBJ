@@ -1,6 +1,7 @@
 package com.eksamen2025.felles;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 
 /** @author Jørgen
@@ -8,7 +9,7 @@ import java.time.LocalDate;
  * 
  * 
  */
-public class Sak implements Serializable{
+public class Sak implements Serializable {
     private String id;
     private String tittel;
     private String beskrivelse;
@@ -17,8 +18,8 @@ public class Sak implements Serializable{
     private String status;
     private String innsender;
     private String mottaker;
-    private LocalDate opprettet;
-    private LocalDate oppdatert;
+    private Timestamp opprettet;
+    private Timestamp oppdatert;
     private String kommentar;
     private String tilbakemelding;
 
@@ -158,7 +159,7 @@ public class Sak implements Serializable{
      * 
      * @param opprettet
      */
-    public void setOpprettet(LocalDate opprettet) {
+    public void setOpprettet(Timestamp opprettet) {
         this.opprettet = opprettet;
     }
 
@@ -166,7 +167,7 @@ public class Sak implements Serializable{
      * 
      * @return opprettet
      */
-    public LocalDate getOpprettet() {
+    public Timestamp getOpprettet() {
         return opprettet;
     }
 
@@ -174,7 +175,7 @@ public class Sak implements Serializable{
      * 
      * @param oppdatert
      */
-    public void setOppdatert(LocalDate oppdatert) {
+    public void setOppdatert(Timestamp oppdatert) {
         this.oppdatert = oppdatert;
     }
 
@@ -182,7 +183,7 @@ public class Sak implements Serializable{
      * 
      * @return oppdatert
      */
-    public LocalDate getOppdatert() {
+    public Timestamp getOppdatert() {
         return oppdatert;
     }
 
@@ -250,8 +251,8 @@ public class Sak implements Serializable{
         private String status;
         private String innsender;
         private String mottaker;
-        private LocalDate opprettet;
-        private LocalDate oppdatert;
+        private Timestamp opprettet;
+        private Timestamp oppdatert;
         private String kommentar;
         private String tilbakemelding;
 
@@ -317,14 +318,14 @@ public class Sak implements Serializable{
          * @param opprettet
          * @return this oppsett instanse
          */
-        public Oppsett opprettet(LocalDate opprettet) { this.opprettet = opprettet; return this; }
+        public Oppsett opprettet(Timestamp opprettet) { this.opprettet = opprettet; return this; }
 
         /**
          * 
          * @param oppdatert
          * @return this oppsett instanse
          */
-        public Oppsett oppdatert(LocalDate oppdatert) { this.oppdatert = oppdatert; return this; }
+        public Oppsett oppdatert(Timestamp oppdatert) { this.oppdatert = oppdatert; return this; }
 
         /**
          * 
