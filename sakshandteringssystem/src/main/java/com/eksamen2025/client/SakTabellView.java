@@ -1,28 +1,35 @@
 package com.eksamen2025.client;
 
-import com.eksamen2025.felles.Bruker;
-import com.eksamen2025.felles.Rolle;
-import com.eksamen2025.felles.Sak;
-import com.eksamen2025.SocketRequest;
-import com.eksamen2025.SocketResponse;
-
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.eksamen2025.SocketRequest;
+import com.eksamen2025.SocketResponse;
+import com.eksamen2025.felles.Bruker;
+import com.eksamen2025.felles.Rolle;
+import com.eksamen2025.felles.Sak;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class SakTabellView {
     private final Bruker aktivBruker;
@@ -35,6 +42,8 @@ public class SakTabellView {
     private ComboBox<String> cbStatus = new ComboBox<>();
     private TextField tfTittelSok = new TextField();
     private TextField tfBeskrivelseSok = new TextField();
+    private TextField tfStartÅr = new TextField();
+    private TextField tfSluttÅr = new TextField();
 
 
     public SakTabellView(Bruker bruker) {
@@ -162,6 +171,26 @@ public class SakTabellView {
         .filter(s -> cbStatus.getValue() == null || s.getStatus().equalsIgnoreCase(cbStatus.getValue()))
         .filter(s -> tfTittelSok.getText().isEmpty() || s.getTittel().toLowerCase().contains(tfTittelSok.getText().toLowerCase()))
         .filter(s -> tfBeskrivelseSok.getText().isEmpty() || s.getBeskrivelse().toLowerCase().contains(tfBeskrivelseSok.getText().toLowerCase()))
+        .filter(s -> {
+            if (tfStartÅr.getText().isEmpty()) return true;
+            // Legger inn en sjekk på at bruker skriver inn et tall i år-feltet
+            // Det vil bli ignorert hvis det er bokstaver eller ugyldig tall!
+            try {
+                int start = Integer.parseInt(tfStartÅr.getText());
+                return s.getOpprettet().toLocalDateTime().getYear() >= start;
+            } catch (NumberFormatException e) {
+                return true; 
+            }
+        })
+        .filter(s -> {
+            if (tfSluttÅr.getText().isEmpty()) return true;
+            try {
+                int slutt = Integer.parseInt(tfSluttÅr.getText());
+                return s.getOpprettet().toLocalDateTime().getYear() <= slutt;
+            } catch (NumberFormatException e) {
+                return true;
+            }
+        })
         .collect(Collectors.toList());
 
     tabell.setItems(FXCollections.observableArrayList(filtrert));
@@ -224,11 +253,13 @@ private HBox byggFilterpanel() {
     cbStatus.setPromptText("Status");
     tfTittelSok.setPromptText("Søk tittel");
     tfBeskrivelseSok.setPromptText("Søk beskrivelse");
+    tfStartÅr.setPromptText("Startår");
+    tfSluttÅr.setPromptText("Sluttår");
 
     Button btnFiltrer = new Button("Søk");
     btnFiltrer.setOnAction(e -> filtrerTabell());
 
-    return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, btnFiltrer);
+    return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, tfStartÅr, tfSluttÅr ,btnFiltrer);
 }
 
 
