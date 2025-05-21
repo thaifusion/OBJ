@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
+import java.time.LocalDate;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -131,4 +132,17 @@ public class SakDao {
         }
         throw new SQLException("Fant ikke bruker: " + brukernavn);
     }
+
+    public void oppdaterSak(Sak sak) throws SQLException {
+    String sql = "UPDATE sak SET status_id = ?, oppdatertTid = ?, utviklerkommentar = ?, testerTilbakemelding = ? WHERE id = ?";
+    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setInt(1, hentStatusId(sak.getStatus()));
+        stmt.setDate(2, Date.valueOf(sak.getOppdatert() != null ? sak.getOppdatert() : LocalDate.now()));
+        stmt.setString(3, sak.getKommentar());
+        stmt.setString(4, sak.getTilbakemelding());
+        stmt.setInt(5, Integer.parseInt(sak.getId()));
+        stmt.executeUpdate();
+    }
+}
+
 }

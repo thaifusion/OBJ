@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 import javafx.beans.property.*;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 
 
 
@@ -160,6 +157,11 @@ public class Sak implements Serializable{
     public String getMottaker() {
         return mottaker;
     }
+
+    public String getId() {
+    return id;
+    }
+
 
     /**
      * 
