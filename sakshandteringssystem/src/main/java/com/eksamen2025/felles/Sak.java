@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 /** @author Jørgen
  * Klassen representerer en sak.
- * 
+ * Objektet er serialiserbart for å kunne sendes mellom server og klient.
  * 
  */
 public class Sak implements Serializable {
@@ -23,11 +23,9 @@ public class Sak implements Serializable {
     private String kommentar;
     private String tilbakemelding;
 
-    /**
-     * 
-     * @param oppsett
+    /** Konstruktøren oppretter et sak-objekt med alle attributtene.
+     * @param oppsett Oppsett-objektet som inneholder informasjon om saken
      */
-    // Konstruktør
     public Sak(Oppsett oppsett) {
         this.id = oppsett.id;
         this.tittel = oppsett.tittel;
@@ -343,7 +341,7 @@ public class Sak implements Serializable {
 
         /**
          * 
-         * @return nytt saks-objekt
+         * @return nytt saks-objekt med "this" oppsett
          */
         public Sak bygg() {
             return new Sak(this);

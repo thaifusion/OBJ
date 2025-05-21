@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import com.eksamen2025.felles.Prioritet;
 
-/**
- * DAO for håndtering av Prioritet-objekter mot databasen.
+/** @author Jørgen
+ * Klassen oppretter forbindelse med databasen for å hente prioriteringer, som er en egen tabell.
+ * Har en metode for å hente alle prioriteringer fra databasen.
  */
 public class PrioritetDao {
 

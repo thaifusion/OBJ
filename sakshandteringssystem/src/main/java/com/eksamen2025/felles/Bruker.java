@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /** @author Jørgen
  * Klassen representerer en bruker
- * 
+ * Brukerobjektet er serialiserbart for å kunne sendes mellom server og klient.
  * 
  */
 
