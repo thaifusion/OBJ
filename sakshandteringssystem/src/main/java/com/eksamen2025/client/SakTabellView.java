@@ -42,6 +42,8 @@ public class SakTabellView {
     protected ComboBox<String> cbStatus = new ComboBox<>();
     protected TextField tfTittelSok = new TextField();
     protected TextField tfBeskrivelseSok = new TextField();
+    protected TextField tfStartÅr = new TextField();
+    protected TextField tfSluttÅr = new TextField();
 
 
     public SakTabellView(Bruker bruker) {
@@ -169,6 +171,8 @@ public class SakTabellView {
         .filter(s -> cbStatus.getValue() == null || s.getStatus().equalsIgnoreCase(cbStatus.getValue()))
         .filter(s -> tfTittelSok.getText().isEmpty() || s.getTittel().toLowerCase().contains(tfTittelSok.getText().toLowerCase()))
         .filter(s -> tfBeskrivelseSok.getText().isEmpty() || s.getBeskrivelse().toLowerCase().contains(tfBeskrivelseSok.getText().toLowerCase()))
+        .filter(s -> tfStartÅr.getText().isEmpty() || s.getOpprettet().toLocalDateTime().getYear() >= Integer.parseInt(tfStartÅr.getText()))
+        .filter(s -> tfSluttÅr.getText().isEmpty() || s.getOpprettet().toLocalDateTime().getYear() <= Integer.parseInt(tfSluttÅr.getText()))
         .collect(Collectors.toList());
 
     tabell.setItems(FXCollections.observableArrayList(filtrert));
@@ -231,11 +235,13 @@ public HBox byggFilterpanel() {
     cbStatus.setPromptText("Status");
     tfTittelSok.setPromptText("Søk tittel");
     tfBeskrivelseSok.setPromptText("Søk beskrivelse");
+    tfStartÅr.setPromptText("Fra år");
+    tfSluttÅr.setPromptText("Til år");
 
     Button btnFiltrer = new Button("Søk");
     btnFiltrer.setOnAction(e -> filtrerTabell());
 
-    return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, btnFiltrer);
+    return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, tfStartÅr, tfSluttÅr ,btnFiltrer);
 }
 
 
