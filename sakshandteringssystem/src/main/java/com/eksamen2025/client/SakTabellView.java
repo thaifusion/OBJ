@@ -147,9 +147,14 @@ public class SakTabellView {
             statusLabel.setText("Du har " + filtrert.size() + " saker (rolle: " + rolle + ").");
           }
 
-          cbPrioritet.getItems().setAll("LAV", "MIDDELS", "HØY");
-          cbKategori.getItems().setAll("UI-feil", "Backend-feil", "Funksjonsforespørsel");
-          cbStatus.getItems().setAll("SUBMITTED", "ASSIGNED", "IN_PROGRESS", "FIXED", "RESOLVED", "TEST_FAILED", "CLOSED");
+        cbPrioritet.getItems().setAll("Alle", "LAV", "MIDDELS", "HØY");
+        cbPrioritet.setValue("Alle");
+
+        cbKategori.getItems().setAll("Alle", "UI-feil", "Backend-feil", "Funksjonsforespørsel");
+        cbKategori.setValue("Alle");
+
+        cbStatus.getItems().setAll("Alle", "SUBMITTED", "ASSIGNED", "IN_PROGRESS", "FIXED", "RESOLVED", "TEST_FAILED", "CLOSED");
+        cbStatus.setValue("Alle");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,9 +163,9 @@ public class SakTabellView {
     
     private void filtrerTabell() {
     List<Sak> filtrert = saker.stream()
-        .filter(s -> cbPrioritet.getValue() == null || s.getPrioritet().name().equalsIgnoreCase(cbPrioritet.getValue()))
-        .filter(s -> cbKategori.getValue() == null || s.getKategori().equalsIgnoreCase(cbKategori.getValue()))
-        .filter(s -> cbStatus.getValue() == null || s.getStatus().equalsIgnoreCase(cbStatus.getValue()))
+        .filter(s -> cbPrioritet.getValue() == null || cbPrioritet.getValue().equals("Alle") || s.getPrioritet().name().equalsIgnoreCase(cbPrioritet.getValue()))
+        .filter(s -> cbKategori.getValue() == null || cbKategori.getValue().equals("Alle") || s.getKategori().equalsIgnoreCase(cbKategori.getValue()))
+        .filter(s -> cbStatus.getValue() == null || cbStatus.getValue().equals("Alle") || s.getStatus().equalsIgnoreCase(cbStatus.getValue()))
         .filter(s -> tfTittelSok.getText().isEmpty() || s.getTittel().toLowerCase().contains(tfTittelSok.getText().toLowerCase()))
         .filter(s -> tfBeskrivelseSok.getText().isEmpty() || s.getBeskrivelse().toLowerCase().contains(tfBeskrivelseSok.getText().toLowerCase()))
         .collect(Collectors.toList());
@@ -168,6 +173,7 @@ public class SakTabellView {
     tabell.setItems(FXCollections.observableArrayList(filtrert));
     statusLabel.setText("Viser " + filtrert.size() + " filtrerte saker.");
 }
+
 
     public BorderPane getView() {
     BorderPane layout = new BorderPane();
