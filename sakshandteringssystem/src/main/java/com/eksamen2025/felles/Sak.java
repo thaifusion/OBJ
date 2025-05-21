@@ -363,7 +363,7 @@ public class Sak implements Serializable{
 public StringProperty tittelProperty() {
     return new SimpleStringProperty(tittel);
 }
-
+ 
 public ObjectProperty<Prioritet> prioritetProperty() {
     return new SimpleObjectProperty<>(prioritet);
 }

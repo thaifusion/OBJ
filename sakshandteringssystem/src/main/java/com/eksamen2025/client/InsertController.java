@@ -28,7 +28,7 @@ public class InsertController {
     public InsertController(InsertView view, Rolle brukerRolle) {
         this.view = view;
         //this.brukerRolle = brukerRolle;
-
+        attachEvents();
         // Kun TESTER og LEDER har tilgang til å opprette saker
         if (brukerRolle != Rolle.TESTER && brukerRolle != Rolle.LEDER) {
             view.deaktiverSkjemaFelter();
@@ -36,7 +36,7 @@ public class InsertController {
             return;
         }
 
-        attachEvents();
+        //attachEvents();
     }
     
     /**
@@ -48,7 +48,7 @@ public class InsertController {
         view.btnVisSaker.setOnAction(e -> {
         SakTabellView tabellView = new SakTabellView(NetworkClient.getAktivBruker());
         Scene tabellScene = new Scene(tabellView.getView(), 800, 600);
-        Stage stage = (Stage) view.getView().getScene().getWindow();
+        Stage stage = (Stage) view.btnVisSaker.getScene().getWindow();
         stage.setScene(tabellScene);
     });
     }

@@ -5,6 +5,8 @@ import com.eksamen2025.felles.Rolle;
 import com.eksamen2025.felles.Sak;
 import com.eksamen2025.SocketRequest;
 import com.eksamen2025.SocketResponse;
+
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -12,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.ObjectInputStream;
@@ -26,6 +29,12 @@ public class SakTabellView {
     private TableView<Sak> tabell = new TableView<>();
     private ObservableList<Sak> saker = FXCollections.observableArrayList();
     private Label statusLabel = new Label("Ingen data lastet ennå.");
+    
+    private ComboBox<String> cbPrioritet = new ComboBox<>();
+    private ComboBox<String> cbKategori = new ComboBox<>();
+    private ComboBox<String> cbStatus = new ComboBox<>();
+    private TextField tfTittelSok = new TextField();
+    private TextField tfBeskrivelseSok = new TextField();
 
 
     public SakTabellView(Bruker bruker) {
@@ -65,9 +74,31 @@ public class SakTabellView {
         TableColumn<Sak, String> colMottaker = new TableColumn<>("Mottaker");
         colMottaker.setCellValueFactory(cellData -> cellData.getValue().mottakerProperty());
 
+        TableColumn<Sak, String> colOppdatert = new TableColumn<>("Oppdatert");
+        colOppdatert.setCellValueFactory(cellData ->
+        new SimpleStringProperty(cellData.getValue().getOppdatert().toString()));
+        
+        // Opprettet-dato
+        TableColumn<Sak, String> colOpprettet = new TableColumn<>("Opprettet");
+        colOpprettet.setCellValueFactory(cellData ->
+        new SimpleStringProperty(cellData.getValue().getOpprettet().toString()));
+
+       // Utviklerkommentar
+       TableColumn<Sak, String> colKommentar = new TableColumn<>("Utviklerkommentar");
+       colKommentar.setCellValueFactory(cellData ->
+       new SimpleStringProperty(cellData.getValue().getKommentar()));
+
+       // Tester-tilbakemelding
+      TableColumn<Sak, String> colTilbakemelding = new TableColumn<>("Tester-tilbakemelding");
+      colTilbakemelding.setCellValueFactory(cellData ->
+      new SimpleStringProperty(cellData.getValue().getTilbakemelding()));
+
+
         tabell.getColumns().setAll(List.of(
-    colId, colTittel, colPrioritet, colKategori, colStatus, colRapportor, colMottaker
+    colId, colTittel, colPrioritet, colKategori, colStatus, colRapportor, colMottaker, colOppdatert, colOpprettet,
+    colKommentar, colTilbakemelding
 ));
+
     }
 
     private void hentOgFiltrerSaker() {
@@ -105,6 +136,7 @@ public class SakTabellView {
             }
 
             saker.setAll(filtrert);
+            System.out.println("Antall saker mottatt: " + saker.size());
             tabell.setItems(saker);
 
             // Sett status i GUI
@@ -114,10 +146,27 @@ public class SakTabellView {
             statusLabel.setText("Du har " + filtrert.size() + " saker (rolle: " + rolle + ").");
           }
 
+          cbPrioritet.getItems().setAll("LAV", "MIDDELS", "HØY");
+          cbKategori.getItems().setAll("UI-feil", "Backend-feil", "Funksjonsforespørsel");
+          cbStatus.getItems().setAll("SUBMITTED", "ASSIGNED", "IN_PROGRESS", "FIXED", "RESOLVED", "TEST_FAILED", "CLOSED");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    
+    private void filtrerTabell() {
+    List<Sak> filtrert = saker.stream()
+        .filter(s -> cbPrioritet.getValue() == null || s.getPrioritet().name().equalsIgnoreCase(cbPrioritet.getValue()))
+        .filter(s -> cbKategori.getValue() == null || s.getKategori().equalsIgnoreCase(cbKategori.getValue()))
+        .filter(s -> cbStatus.getValue() == null || s.getStatus().equalsIgnoreCase(cbStatus.getValue()))
+        .filter(s -> tfTittelSok.getText().isEmpty() || s.getTittel().toLowerCase().contains(tfTittelSok.getText().toLowerCase()))
+        .filter(s -> tfBeskrivelseSok.getText().isEmpty() || s.getBeskrivelse().toLowerCase().contains(tfBeskrivelseSok.getText().toLowerCase()))
+        .collect(Collectors.toList());
+
+    tabell.setItems(FXCollections.observableArrayList(filtrert));
+    statusLabel.setText("Viser " + filtrert.size() + " filtrerte saker.");
+}
 
     public BorderPane getView() {
     BorderPane layout = new BorderPane();
@@ -132,7 +181,8 @@ public class SakTabellView {
     // ✅ 2. Tabell midtstilt
     tabell.setItems(saker);
     tabell.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-    layout.setCenter(tabell);
+    VBox midt = new VBox(10, byggFilterpanel(), tabell);
+    layout.setCenter(midt);
 
     // ✅ 3. Knapper nederst
     Button btnTilbake = new Button("Tilbake");
@@ -167,5 +217,19 @@ public class SakTabellView {
 
     return layout;
 }
+
+private HBox byggFilterpanel() {
+    cbPrioritet.setPromptText("Prioritet");
+    cbKategori.setPromptText("Kategori");
+    cbStatus.setPromptText("Status");
+    tfTittelSok.setPromptText("Søk tittel");
+    tfBeskrivelseSok.setPromptText("Søk beskrivelse");
+
+    Button btnFiltrer = new Button("Søk");
+    btnFiltrer.setOnAction(e -> filtrerTabell());
+
+    return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, btnFiltrer);
+}
+
 
 }

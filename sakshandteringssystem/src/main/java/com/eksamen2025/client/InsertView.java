@@ -59,6 +59,7 @@ public class InsertView {
         //layout.setPadding(new Insets(20));
         layout.setPadding(new Insets(20));
         return layout;
+        
     }
 
     /**
