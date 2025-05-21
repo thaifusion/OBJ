@@ -3,7 +3,8 @@ package com.eksamen2025.client;
 import com.eksamen2025.felles.Rolle;
 import com.eksamen2025.felles.Sak;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import com.eksamen2025.felles.Prioritet;
 import javafx.scene.control.Alert;
@@ -73,9 +74,9 @@ public class InsertController {
                 .kategori(kategori)
                 .status("SUBMITTED")
                 .innsender(NetworkClient.getBrukernavn())
-                .opprettet(LocalDate.now())
-                .oppdatert(LocalDate.now())
-                .kommentar("")        // tom ved innsending
+                .opprettet(Timestamp.valueOf(LocalDateTime.now())) // Tidspunkt registrert er to timer bak vår tidssone, fordi
+                .oppdatert(Timestamp.valueOf(LocalDateTime.now())) // LocalDateTime.now() returnerer en tid utenfor vår tidssone. 
+                .kommentar("")              // tom ved innsending
                 .tilbakemelding("")   // tom ved innsending
                 .bygg();
 

@@ -23,13 +23,13 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        // 1. Hent brukere (med navn + rolle) fra server
+        // Hent brukere (med navn + rolle) fra server
         List<Bruker> brukere = NetworkClient.hentBrukereFraServer();
         List<String> brukernavnListe = brukere.stream()
         .map(Bruker::getBrukernavn)
         .collect(Collectors.toList());
 
-        // 2. Vis dialog for valg av brukernavn
+        // Vis dialog for valg av brukernavn
         ChoiceDialog<String> dialog = new ChoiceDialog<>(
                 brukernavnListe.isEmpty() ? "Anonymous" : brukernavnListe.get(0),
                 brukernavnListe);
@@ -40,7 +40,7 @@ public class App extends Application {
         Optional<String> result = dialog.showAndWait();
         String valgtBrukernavn = result.orElse("Anonymous");
 
-        // 3. Finn valgt bruker og lagre i NetworkClient
+        // Finn valgt bruker og lagre i NetworkClient
         Bruker valgtBruker = brukere.stream()
                 .filter(b -> b.getBrukernavn().equals(valgtBrukernavn))
                 .findFirst()
@@ -48,15 +48,14 @@ public class App extends Application {
 
         NetworkClient.setAktivBruker(valgtBruker);
 
-        // 4. Start GUI for å sende inn sak
+        // Start GUI
         InsertView view = new InsertView();
         view.hentValgFraServer("localhost", 3000);
 
         new InsertController(view, valgtBruker.getRolle());
 
         Scene scene = new Scene(view.getView());
-        stage.setTitle("Sakshåndteringssystem - Innlogget som: " +
-                valgtBruker.getBrukernavn() + " (" + valgtBruker.getRolle() + ")");
+        stage.setTitle("Sakshåndteringssystem - Innlogget som: " + valgtBruker.getBrukernavn() + " (" + valgtBruker.getRolle() + ")");
         stage.setScene(scene);
         stage.setWidth(800);
         stage.setHeight(600);

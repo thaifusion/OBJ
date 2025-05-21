@@ -2,12 +2,13 @@ package com.eksamen2025.server.nettverk;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import com.eksamen2025.server.dao.DatabaseUtil;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import com.eksamen2025.database.DatabaseUtil;
 
 /**
  * Hovedserver-klassen: oppretter en server og åpner en ServerSocket på port 3000 og

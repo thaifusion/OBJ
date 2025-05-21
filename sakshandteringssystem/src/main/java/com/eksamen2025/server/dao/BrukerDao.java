@@ -14,7 +14,7 @@ import com.eksamen2025.felles.Rolle;
 
 /** @author Jørgen
  *  Klassen oppretter forbindelse til databasen for brukere. 
- *  Metoder for å hente alle brukere, samt legge til nye.
+ *  Inneholder også metoder for å hente alle brukere, samt legge til nye.
  * 
  */
 public class BrukerDao {
@@ -39,7 +39,7 @@ public class BrukerDao {
      * @throws SQLException Hvis en feilmelding fra databasen blir kastet
      */
     public List<Bruker> hentAlleBrukere() throws SQLException {
-        String sql = "SELECT * FROM brukere";
+        String sql = "SELECT * FROM bruker";
         try(Statement stmt = conn.createStatement();) {
             ResultSet rs = stmt. executeQuery(sql);
 
@@ -58,9 +58,11 @@ public class BrukerDao {
      * 
      * @param bruker brukernavn
      * @return null
+     * @throws SQLException Hvis brukernavnet ikke finnes i databasen
+     * 
      */
     public Bruker getBrukerFraBrukernavn(String bruker) {
-        String sql = "SELECT * FROM brukere WHERE brukernavn = ?";
+        String sql = "SELECT * FROM bruker WHERE brukernavn = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, brukernavn);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -72,18 +74,27 @@ public class BrukerDao {
                 }
             }
         } catch (SQLException e) {
+            System.out.println("Feil ved henting av bruker: " + e.getMessage());
             e.printStackTrace();
         }
 
         return null;
     }
 
+    /**
+     * 
+     * @param bruker et brukerobjekt
+     * @throws SQLException 
+     */
     public void leggTilBruker(Bruker bruker) throws SQLException {
-        String sql = "INSERT INTO brukere (Brukernavn, Rolle) VALUES (?, ?)";
+        String sql = "INSERT INTO bruker (Brukernavn, Rolle) VALUES (?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, bruker.getBrukernavn());
-            stmt.setString(2, bruker.getRolle().name()); //.name() for å konvertere Rolle-enumobjekt til String
+            stmt.setString(2, bruker.getRolle().toString()); //.toString for å konvertere Rolle-enumobjekt til String
             stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Feil ved innsetting av bruker: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

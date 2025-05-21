@@ -1,13 +1,15 @@
 package com.eksamen2025.felles;
 
+import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 
 /** @author Jørgen
  * Klassen representerer en sak.
- * 
+ * Objektet er serialiserbart for å kunne sendes mellom server og klient.
  * 
  */
-public class Sak {
+public class Sak implements Serializable {
     private String id;
     private String tittel;
     private String beskrivelse;
@@ -16,16 +18,14 @@ public class Sak {
     private String status;
     private String innsender;
     private String mottaker;
-    private LocalDate opprettet;
-    private LocalDate oppdatert;
+    private Timestamp opprettet;
+    private Timestamp oppdatert;
     private String kommentar;
     private String tilbakemelding;
 
-    /**
-     * 
-     * @param oppsett
+    /** Konstruktøren oppretter et sak-objekt med alle attributtene.
+     * @param oppsett Oppsett-objektet som inneholder informasjon om saken
      */
-    // Konstruktør
     public Sak(Oppsett oppsett) {
         this.id = oppsett.id;
         this.tittel = oppsett.tittel;
@@ -157,7 +157,7 @@ public class Sak {
      * 
      * @param opprettet
      */
-    public void setOpprettet(LocalDate opprettet) {
+    public void setOpprettet(Timestamp opprettet) {
         this.opprettet = opprettet;
     }
 
@@ -165,7 +165,7 @@ public class Sak {
      * 
      * @return opprettet
      */
-    public LocalDate getOpprettet() {
+    public Timestamp getOpprettet() {
         return opprettet;
     }
 
@@ -173,7 +173,7 @@ public class Sak {
      * 
      * @param oppdatert
      */
-    public void setOppdatert(LocalDate oppdatert) {
+    public void setOppdatert(Timestamp oppdatert) {
         this.oppdatert = oppdatert;
     }
 
@@ -181,7 +181,7 @@ public class Sak {
      * 
      * @return oppdatert
      */
-    public LocalDate getOppdatert() {
+    public Timestamp getOppdatert() {
         return oppdatert;
     }
 
@@ -249,8 +249,8 @@ public class Sak {
         private String status;
         private String innsender;
         private String mottaker;
-        private LocalDate opprettet;
-        private LocalDate oppdatert;
+        private Timestamp opprettet;
+        private Timestamp oppdatert;
         private String kommentar;
         private String tilbakemelding;
 
@@ -316,14 +316,14 @@ public class Sak {
          * @param opprettet
          * @return this oppsett instanse
          */
-        public Oppsett opprettet(LocalDate opprettet) { this.opprettet = opprettet; return this; }
+        public Oppsett opprettet(Timestamp opprettet) { this.opprettet = opprettet; return this; }
 
         /**
          * 
          * @param oppdatert
          * @return this oppsett instanse
          */
-        public Oppsett oppdatert(LocalDate oppdatert) { this.oppdatert = oppdatert; return this; }
+        public Oppsett oppdatert(Timestamp oppdatert) { this.oppdatert = oppdatert; return this; }
 
         /**
          * 
@@ -341,7 +341,7 @@ public class Sak {
 
         /**
          * 
-         * @return nytt saks-objekt
+         * @return nytt saks-objekt med "this" oppsett
          */
         public Sak bygg() {
             return new Sak(this);
