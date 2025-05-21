@@ -102,5 +102,16 @@ public static boolean oppdaterSak(Sak sak) {
     }
 }
 
+public static List<String> hentUtviklere() {
+    List<String> utviklere = new ArrayList<>();
+    for (Bruker b : hentBrukereFraServer()) {
+        if (b.getRolle().name().equals("UTVIKLER")) {
+            utviklere.add(b.getBrukernavn());
+        }
+    }
+    return utviklere;
+}
+
+
 
 }
