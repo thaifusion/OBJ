@@ -1,41 +1,47 @@
 package com.eksamen2025.client;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.eksamen2025.SocketRequest;
+import com.eksamen2025.SocketResponse;
 import com.eksamen2025.felles.Bruker;
 import com.eksamen2025.felles.Rolle;
 import com.eksamen2025.felles.Sak;
-import com.eksamen2025.SocketRequest;
-import com.eksamen2025.SocketResponse;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class SakTabellView {
-    private final Bruker aktivBruker;
-    private TableView<Sak> tabell = new TableView<>();
-    private ObservableList<Sak> saker = FXCollections.observableArrayList();
-    private Label statusLabel = new Label("Ingen data lastet ennå.");
+    protected final Bruker aktivBruker;
+    protected TableView<Sak> tabell = new TableView<>();
+    protected ObservableList<Sak> saker = FXCollections.observableArrayList();
+    protected Label statusLabel = new Label("Ingen data lastet ennå.");
     
-    private ComboBox<String> cbPrioritet = new ComboBox<>();
-    private ComboBox<String> cbKategori = new ComboBox<>();
-    private ComboBox<String> cbStatus = new ComboBox<>();
-    private TextField tfTittelSok = new TextField();
-    private TextField tfBeskrivelseSok = new TextField();
+    protected ComboBox<String> cbPrioritet = new ComboBox<>();
+    protected ComboBox<String> cbKategori = new ComboBox<>();
+    protected ComboBox<String> cbStatus = new ComboBox<>();
+    protected TextField tfTittelSok = new TextField();
+    protected TextField tfBeskrivelseSok = new TextField();
 
 
     public SakTabellView(Bruker bruker) {
@@ -44,7 +50,7 @@ public class SakTabellView {
         hentOgFiltrerSaker();
     }
 
-    private void byggTabell() {
+    public void byggTabell() {
         TableColumn<Sak, String> colId = new TableColumn<>("ID");
         colId.setCellValueFactory(cellData -> cellData.getValue().saksIdProperty());
 
@@ -102,7 +108,7 @@ public class SakTabellView {
 
     }
 
-    private void hentOgFiltrerSaker() {
+    public void hentOgFiltrerSaker() {
         try (Socket socket = new Socket("localhost", 3000);
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
@@ -198,7 +204,7 @@ public class SakTabellView {
     });
 
     Button btnOppdater = new Button("Oppdater");
-    btnOppdater.setOnAction(e -> oppdaterValgtSak());
+    btnOppdater.setOnAction(e -> hentOgFiltrerSaker());
 
     Button btnDetaljer = new Button("Vis detaljer");
     btnDetaljer.setOnAction(e -> {
@@ -219,7 +225,7 @@ public class SakTabellView {
     return layout;
 }
 
-private HBox byggFilterpanel() {
+public HBox byggFilterpanel() {
     cbPrioritet.setPromptText("Prioritet");
     cbKategori.setPromptText("Kategori");
     cbStatus.setPromptText("Status");
@@ -231,84 +237,6 @@ private HBox byggFilterpanel() {
 
     return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, btnFiltrer);
 }
-
-
-private void oppdaterValgtSak() {
-    Sak valgt = tabell.getSelectionModel().getSelectedItem();
-    if (valgt == null) {
-        new Alert(Alert.AlertType.WARNING, "Du må velge en sak først.").showAndWait();
-        return;
-    }
-
-    // Tester får bare oppdatere egne saker
-    if (aktivBruker.getRolle() == Rolle.TESTER &&
-        !valgt.getInnsender().equals(aktivBruker.getBrukernavn())) {
-        new Alert(Alert.AlertType.WARNING, "Testere kan bare oppdatere egne saker.").showAndWait();
-        return;
-    }
-
-    Dialog<ButtonType> dialog = new Dialog<>();
-    dialog.setTitle("Oppdater sak");
-    dialog.setHeaderText("Endre status og legg inn kommentar");
-
-    ComboBox<String> cbNyStatus = new ComboBox<>();
-    if (aktivBruker.getRolle() == Rolle.TESTER) {
-        cbNyStatus.getItems().setAll("RESOLVED", "TEST_FAILED");
-    } else if (aktivBruker.getRolle() == Rolle.UTVIKLER) {
-        cbNyStatus.getItems().setAll("IN_PROGRESS", "FIXED");
-    } else if (aktivBruker.getRolle() == Rolle.LEDER) {
-        cbNyStatus.getItems().setAll("ASSIGNED", "CLOSED", "SUBMITTED");
-    }
-    cbNyStatus.setValue(valgt.getStatus());
-
-    TextArea kommentarFelt = new TextArea();
-    kommentarFelt.setPromptText("Skriv kommentar eller tilbakemelding");
-    kommentarFelt.setPrefRowCount(4);
-
-    VBox vbox = new VBox(10, new Label("Ny status:"), cbNyStatus,
-                              new Label("Kommentar:"), kommentarFelt);
-
-    ComboBox<String> cbMottaker = null;
-
-    // Hvis leder – legg til felt for mottaker
-    if (aktivBruker.getRolle() == Rolle.LEDER) {
-        cbMottaker = new ComboBox<>();
-        cbMottaker.getItems().setAll(NetworkClient.hentUtviklere());
-        cbMottaker.setValue(valgt.getMottaker());
-        vbox.getChildren().addAll(new Label("Velg mottaker:"), cbMottaker);
-    }
-
-    dialog.getDialogPane().setContent(vbox);
-    dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-    ComboBox<String> finalCbMottaker = cbMottaker;
-
-    dialog.showAndWait().ifPresent(type -> {
-        if (type == ButtonType.OK) {
-            valgt.setStatus(cbNyStatus.getValue());
-            valgt.setOppdatert(LocalDate.now());
-
-            if (aktivBruker.getRolle() == Rolle.TESTER) {
-                valgt.setTilbakemelding(kommentarFelt.getText());
-            } else if (aktivBruker.getRolle() == Rolle.UTVIKLER) {
-                valgt.setKommentar(kommentarFelt.getText());
-            } else if (aktivBruker.getRolle() == Rolle.LEDER && finalCbMottaker != null) {
-                valgt.setKommentar(kommentarFelt.getText());
-                valgt.setMottaker(finalCbMottaker.getValue());
-            }
-
-            boolean ok = NetworkClient.oppdaterSak(valgt);
-            if (ok) {
-                new Alert(Alert.AlertType.INFORMATION, "Sak oppdatert.").showAndWait();
-                hentOgFiltrerSaker();
-            } else {
-                new Alert(Alert.AlertType.ERROR, "Feil ved oppdatering.").showAndWait();
-            }
-        }
-    });
-}
-
-
 
 
 }
