@@ -236,8 +236,14 @@ private HBox byggFilterpanel() {
 private void oppdaterValgtSak() {
     Sak valgt = tabell.getSelectionModel().getSelectedItem();
     if (valgt == null) {
-        Alert alert = new Alert(Alert.AlertType.WARNING, "Du må velge en sak først.");
-        alert.showAndWait();
+        new Alert(Alert.AlertType.WARNING, "Du må velge en sak først.").showAndWait();
+        return;
+    }
+
+    // Tester får bare oppdatere egne saker
+    if (aktivBruker.getRolle() == Rolle.TESTER &&
+        !valgt.getInnsender().equals(aktivBruker.getBrukernavn())) {
+        new Alert(Alert.AlertType.WARNING, "Testere kan bare oppdatere egne saker.").showAndWait();
         return;
     }
 
@@ -246,42 +252,63 @@ private void oppdaterValgtSak() {
     dialog.setHeaderText("Endre status og legg inn kommentar");
 
     ComboBox<String> cbNyStatus = new ComboBox<>();
-    cbNyStatus.getItems().setAll("SUBMITTED", "ASSIGNED", "IN_PROGRESS", "FIXED", "RESOLVED", "TEST_FAILED", "CLOSED");
+    if (aktivBruker.getRolle() == Rolle.TESTER) {
+        cbNyStatus.getItems().setAll("RESOLVED", "TEST_FAILED");
+    } else if (aktivBruker.getRolle() == Rolle.UTVIKLER) {
+        cbNyStatus.getItems().setAll("IN_PROGRESS", "FIXED");
+    } else if (aktivBruker.getRolle() == Rolle.LEDER) {
+        cbNyStatus.getItems().setAll("ASSIGNED", "CLOSED", "SUBMITTED");
+    }
     cbNyStatus.setValue(valgt.getStatus());
 
     TextArea kommentarFelt = new TextArea();
     kommentarFelt.setPromptText("Skriv kommentar eller tilbakemelding");
     kommentarFelt.setPrefRowCount(4);
 
-    VBox vbox = new VBox(10, new Label("Ny status:"), cbNyStatus, new Label("Kommentar:"), kommentarFelt);
-    dialog.getDialogPane().setContent(vbox);
+    VBox vbox = new VBox(10, new Label("Ny status:"), cbNyStatus,
+                              new Label("Kommentar:"), kommentarFelt);
 
+    ComboBox<String> cbMottaker = null;
+
+    // Hvis leder – legg til felt for mottaker
+    if (aktivBruker.getRolle() == Rolle.LEDER) {
+        cbMottaker = new ComboBox<>();
+        cbMottaker.getItems().setAll(NetworkClient.hentUtviklere());
+        cbMottaker.setValue(valgt.getMottaker());
+        vbox.getChildren().addAll(new Label("Velg mottaker:"), cbMottaker);
+    }
+
+    dialog.getDialogPane().setContent(vbox);
     dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+    ComboBox<String> finalCbMottaker = cbMottaker;
 
     dialog.showAndWait().ifPresent(type -> {
         if (type == ButtonType.OK) {
             valgt.setStatus(cbNyStatus.getValue());
-
-            if (aktivBruker.getRolle().name().equals("UTVIKLER")) {
-                valgt.setKommentar(kommentarFelt.getText());
-            } else if (aktivBruker.getRolle().name().equals("TESTER")) {
-                valgt.setTilbakemelding(kommentarFelt.getText());
-            }
-
             valgt.setOppdatert(LocalDate.now());
+
+            if (aktivBruker.getRolle() == Rolle.TESTER) {
+                valgt.setTilbakemelding(kommentarFelt.getText());
+            } else if (aktivBruker.getRolle() == Rolle.UTVIKLER) {
+                valgt.setKommentar(kommentarFelt.getText());
+            } else if (aktivBruker.getRolle() == Rolle.LEDER && finalCbMottaker != null) {
+                valgt.setKommentar(kommentarFelt.getText());
+                valgt.setMottaker(finalCbMottaker.getValue());
+            }
 
             boolean ok = NetworkClient.oppdaterSak(valgt);
             if (ok) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Sak oppdatert.");
-                alert.showAndWait();
+                new Alert(Alert.AlertType.INFORMATION, "Sak oppdatert.").showAndWait();
                 hentOgFiltrerSaker();
             } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Feil ved oppdatering.");
-                alert.showAndWait();
+                new Alert(Alert.AlertType.ERROR, "Feil ved oppdatering.").showAndWait();
             }
         }
     });
 }
+
+
 
 
 }
