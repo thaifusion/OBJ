@@ -4,6 +4,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.Connection;
+import java.util.List;
 
 import com.eksamen2025.SocketRequest;
 import com.eksamen2025.SocketResponse;
@@ -55,6 +56,11 @@ public void run() {
                         SakDao sakDao = new SakDao(conn);
                         sakDao.leggTilSak(sak);
                         ut.writeObject(new SocketResponse(true, "Sak lagret"));
+                        break;
+                    case "HENT_SAKER":
+                        SakDao sakDao2 = new SakDao(conn);
+                        List<Sak> alleSaker = sakDao2.hentAlleSaker(); 
+                        ut.writeObject(new SocketResponse(true, alleSaker));
                         break;
                     default:
                         ut.writeObject(new SocketResponse(false, "Ukjent forespørsel"));
