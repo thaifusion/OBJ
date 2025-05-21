@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /** @author Jørgen
  * Klassen representerer en bruker
- * Bruker implementerer Serializable for å gi hver klient en egen tråd
+ * Brukerobjektet er serialiserbart for å kunne sendes mellom server og klient.
  * 
  */
 
