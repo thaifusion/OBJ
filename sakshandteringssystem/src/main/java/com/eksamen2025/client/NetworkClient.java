@@ -20,17 +20,17 @@ public class NetworkClient {
     
 
     public static void setAktivBruker(Bruker bruker) {
-    aktivBruker = bruker;
-}
+        aktivBruker = bruker;
+    }
 
- // Henter aktiv bruker (brukes i SakTabellView og andre steder)
+    // Henter aktiv bruker (brukes i SakTabellView og andre steder)
     public static Bruker getAktivBruker() {
         return aktivBruker;
     }
     
-public static String getBrukernavn() {
-    return aktivBruker != null ? aktivBruker.getBrukernavn() : "Anonymous";
-}
+    public static String getBrukernavn() {
+        return aktivBruker != null ? aktivBruker.getBrukernavn() : "Anonymous";
+    }
 
     public static void setBrukernavn(String navn) {
         brukernavn = navn;
@@ -52,6 +52,8 @@ public static String getBrukernavn() {
             return false;
         }
     }
+
+
 
     public static List<Sak> hentSakerFraServer() {
     try (
@@ -150,5 +152,20 @@ public static String getBrukernavn() {
         return utviklere;
     }
 
-
+    public static boolean oppdaterSak(Sak sak) {
+    try (
+        Socket socket = new Socket("localhost", 3000);
+        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
+    ) {
+        SocketRequest req = new SocketRequest("OPPDATER_SAK", sak, aktivBruker != null ? aktivBruker.getBrukernavn() : null);
+        out.writeObject(req);
+        out.flush();
+        SocketResponse res = (SocketResponse) in.readObject();
+        return res.isSuccess();
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 }

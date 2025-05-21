@@ -5,7 +5,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 import com.eksamen2025.SocketRequest;
 import com.eksamen2025.SocketResponse;
@@ -13,14 +13,10 @@ import com.eksamen2025.felles.Bruker;
 import com.eksamen2025.felles.Rolle;
 import com.eksamen2025.felles.Sak;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 public class LederView extends SakTabellView { // Velger å arve fra SakTabellView for å gjenbruke kode/metoder
     private ComboBox<Bruker> utviklerComboBox = new ComboBox<>();
@@ -34,8 +30,6 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
 
     public LederView(Bruker bruker) {
         super(bruker);
-        
-
         byggGUI();
 
         if (aktivBruker.getRolle() == Rolle.LEDER) {
@@ -78,7 +72,7 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
             valgtSak.setStatus(valgtStatus.toString());
         }
 
-        if (NetworkClient.sendSak(valgtSak)) {                          // Sender sak til server og henter oppdatert saksliste
+        if (LederController.oppdaterSak(valgtSak)) {                    // Sender sak til server, lagrer i basen og oppdaterer GUI
             melding.setText("Sak tildelt utvikler: " + valgtUtvikler.getBrukernavn());
             hentOgFiltrerSaker();
         } else {
@@ -125,10 +119,8 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
      * Inkluderer tabell for saker, knapper for tildeling av utvikler og tilbake til hovedmeny.
      */
     private void byggGUI() {
-        
         byggFilterpanel();
         byggTabell();
-        hentOgFiltrerSaker();
         
 
         layout = new VBox(10);

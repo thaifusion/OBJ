@@ -1,8 +1,14 @@
 package com.eksamen2025.server.dao;
 
 import com.eksamen2025.felles.Sak;
+import com.eksamen2025.SocketRequest;
+import com.eksamen2025.SocketResponse;
+import com.eksamen2025.client.NetworkClient;
 import com.eksamen2025.felles.Prioritet;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -54,6 +60,26 @@ public class SakDao {
         }
     }
 
+    public boolean oppdaterSak(Sak sak) {
+        System.out.println("Starter oppdaterSak for sak ID: " + sak.getId());
+        String sql = "UPDATE sak SET mottaker_id=? WHERE id=?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            if (sak.getMottaker() != null && !sak.getMottaker().isEmpty()) {
+                stmt.setInt(1, hentBrukerId(sak.getMottaker())); // Riktig indeks!
+            } else {
+                stmt.setNull(1, java.sql.Types.INTEGER);
+            }
+            stmt.setInt(2, Integer.parseInt(sak.getId())); // Riktig indeks!
+            int rows = stmt.executeUpdate();
+            System.out.println("Antall rader oppdatert: " + rows + " for sak id: " + sak.getId());
+            return rows > 0;
+        } catch (Exception e) {
+            System.err.println("Feil ved oppdatering av sak med id: " + sak.getId());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     /**
      * Henter alle saker fra databasen.
      */
@@ -70,19 +96,19 @@ public class SakDao {
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Sak sak = new Sak.Oppsett()
-                        .id(String.valueOf(rs.getInt("id")))
-                        .tittel(rs.getString("tittel"))
-                        .beskrivelse(rs.getString("beskrivelse"))
-                        .prioritet(Prioritet.valueOf(rs.getString("prioritetNavn").toUpperCase()))
-                        .kategori(rs.getString("kategoriNavn"))
-                        .status(rs.getString("statusKode"))
-                        .innsender(rs.getString("reporterNavn"))
-                        .mottaker(rs.getString("mottakerNavn"))
-                        .opprettet(rs.getTimestamp("opprettetTid"))
-                        .oppdatert(rs.getTimestamp("oppdatertTid"))
-                        .kommentar(rs.getString("utviklerkommentar"))
-                        .tilbakemelding(rs.getString("testerTilbakemelding"))
-                        .bygg();
+                    .id(String.valueOf(rs.getInt("id")))
+                    .tittel(rs.getString("tittel"))
+                    .beskrivelse(rs.getString("beskrivelse"))
+                    .prioritet(Prioritet.valueOf(rs.getString("prioritetNavn").toUpperCase()))
+                    .kategori(rs.getString("kategoriNavn"))
+                    .status(rs.getString("statusKode"))
+                    .innsender(rs.getString("reporterNavn"))
+                    .mottaker(rs.getString("mottakerNavn"))
+                    .opprettet(rs.getTimestamp("opprettetTid"))
+                    .oppdatert(rs.getTimestamp("oppdatertTid"))
+                    .kommentar(rs.getString("utviklerkommentar"))
+                    .tilbakemelding(rs.getString("testerTilbakemelding"))
+                    .bygg();
                 saker.add(sak);
             }
         } catch (SQLException e) {

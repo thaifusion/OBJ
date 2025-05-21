@@ -357,30 +357,34 @@ public class Sak implements Serializable {
 
     public StringProperty saksIdProperty() {
     return new SimpleStringProperty(id);
-}
+    }
 
-public StringProperty tittelProperty() {
-    return new SimpleStringProperty(tittel);
-}
- 
-public ObjectProperty<Prioritet> prioritetProperty() {
-    return new SimpleObjectProperty<>(prioritet);
-}
+    public StringProperty tittelProperty() {
+        return new SimpleStringProperty(tittel);
+    }
+    
+    public ObjectProperty<Prioritet> prioritetProperty() {
+        return new SimpleObjectProperty<>(prioritet);
+    }
 
-public StringProperty kategoriProperty() {
-    return new SimpleStringProperty(kategori);
-}
+    public StringProperty kategoriProperty() {
+        return new SimpleStringProperty(kategori);
+    }
 
-public StringProperty statusProperty() {
-    return new SimpleStringProperty(status);
-}
+    public StringProperty statusProperty() {
+        return new SimpleStringProperty(status);
+    }
 
-public StringProperty rapportorProperty() {
-    return new SimpleStringProperty(innsender);
-}
+    public StringProperty rapportorProperty() {
+        return new SimpleStringProperty(innsender);
+    }
 
-public StringProperty mottakerProperty() {
-    return new SimpleStringProperty(mottaker);
-}
+    public StringProperty mottakerProperty() {
+        return new SimpleStringProperty(mottaker);
+    }
+
+    public String getId() {
+        return id;
+    }
 }
 

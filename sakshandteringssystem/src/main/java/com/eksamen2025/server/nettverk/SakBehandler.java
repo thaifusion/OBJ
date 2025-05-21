@@ -62,6 +62,12 @@ public void run() {
                         List<Sak> alleSaker = sakDao2.hentAlleSaker(); 
                         ut.writeObject(new SocketResponse(true, alleSaker));
                         break;
+                    case "OPPDATER_SAK":
+                        Sak sakOppdatert = (Sak) req.getData();
+                        SakDao sakDaoUpdate = new SakDao(conn);
+                        boolean success = sakDaoUpdate.oppdaterSak(sakOppdatert);
+                        ut.writeObject(new SocketResponse(success, success ? "Sak oppdatert" : "Ingen rad oppdatert"));
+                        break;
                     default:
                         ut.writeObject(new SocketResponse(false, "Ukjent forespørsel"));
                         break;
@@ -74,6 +80,8 @@ public void run() {
     } catch (Exception e) {
         // Kaster EOFException når klienten kobler fra. Vi har ikke funnet noen annen måte å håndtere dette på.
         // Den har tilsynelatende ingen innvirkning på serverens drift.
+        System.err.println("Feil i SakBehandler: " + e.getMessage());
+        e.printStackTrace();
     }
 }
     
