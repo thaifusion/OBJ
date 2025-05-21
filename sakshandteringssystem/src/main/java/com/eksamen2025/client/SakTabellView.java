@@ -1,22 +1,5 @@
 package com.eksamen2025.client;
 
-import com.eksamen2025.felles.Bruker;
-import com.eksamen2025.felles.Rolle;
-import com.eksamen2025.felles.Sak;
-import com.eksamen2025.SocketRequest;
-import com.eksamen2025.SocketResponse;
-
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -24,12 +7,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.eksamen2025.SocketRequest;
+import com.eksamen2025.SocketResponse;
+import com.eksamen2025.felles.Bruker;
+import com.eksamen2025.felles.Rolle;
+import com.eksamen2025.felles.Sak;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
 public class SakTabellView {
-    private final Bruker aktivBruker;
-    private TableView<Sak> tabell = new TableView<>();
+    protected final Bruker aktivBruker;
+    protected TableView<Sak> tabell = new TableView<>();
     private ObservableList<Sak> saker = FXCollections.observableArrayList();
     private Label statusLabel = new Label("Ingen data lastet ennå.");
     
+    protected TableView<Sak> getTabell() {
+        return tabell;
+    }
+
+    protected Bruker getAktivBruker() {
+        return aktivBruker;
+    }
+
     private ComboBox<String> cbPrioritet = new ComboBox<>();
     private ComboBox<String> cbKategori = new ComboBox<>();
     private ComboBox<String> cbStatus = new ComboBox<>();

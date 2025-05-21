@@ -1,10 +1,5 @@
 package com.eksamen2025;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.ChoiceDialog;
-import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -13,8 +8,14 @@ import java.util.stream.Collectors;
 import com.eksamen2025.client.InsertController;
 import com.eksamen2025.client.InsertView;
 import com.eksamen2025.client.NetworkClient;
+import com.eksamen2025.client.UtviklerView;
 import com.eksamen2025.felles.Bruker;
 import com.eksamen2025.felles.Rolle;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.ChoiceDialog;
+import javafx.stage.Stage;
 
 /**
  * JavaFX App
@@ -48,7 +49,20 @@ public class App extends Application {
 
         NetworkClient.setAktivBruker(valgtBruker);
 
-        // Start GUI
+        // Sjekker om bruker er utvikler, hvis ja, vis UtviklerView
+        if (valgtBruker.getRolle() == Rolle.UTVIKLER) {
+            UtviklerView utviklerView = new UtviklerView(valgtBruker);
+            Scene sceneUtvikler = new Scene(utviklerView.getUtviklerView(), 800, 600);
+
+            stage.setTitle("Sakshåndteringssystem - Innlogget som: " + valgtBruker.getBrukernavn() + " (" + valgtBruker.getRolle() + ")");
+            stage.setScene(sceneUtvikler);
+            stage.setWidth(800);
+            stage.setHeight(600);
+            stage.show();
+            return; 
+        }
+
+        // Ellers: start med InsertView for andre roller
         InsertView view = new InsertView();
         view.hentValgFraServer("localhost", 3000);
 

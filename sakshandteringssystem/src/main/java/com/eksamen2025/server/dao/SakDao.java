@@ -1,16 +1,16 @@
 package com.eksamen2025.server.dao;
 
-import com.eksamen2025.felles.Sak;
-import com.eksamen2025.felles.Prioritet;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.eksamen2025.felles.Prioritet;
+import com.eksamen2025.felles.Sak;
 
 /** @author Jørgen
  * Klassen oppretter forbindelse med databasen for å hente saker.
