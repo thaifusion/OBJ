@@ -71,7 +71,7 @@ public class InsertController {
 
         Prioritet prioritet;
         try {
-            prioritet = Prioritet.valueOf(prioritetStr.toUpperCase());
+            prioritet = Prioritet.valueOf(prioritetStr);
         } catch (IllegalArgumentException e) {
             showAlert("Ugyldig prioritet valgt.");
             return;

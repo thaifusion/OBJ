@@ -14,6 +14,7 @@ import com.eksamen2025.server.dao.BrukerDao;
 import com.eksamen2025.server.dao.KategoriDao;
 import com.eksamen2025.server.dao.PrioritetDao;
 import com.eksamen2025.server.dao.SakDao;
+import com.eksamen2025.server.dao.StatusDao;
 
 /**
  * SakBehandler-klassen: håndterer kommunikasjonen med en klient.
@@ -63,6 +64,11 @@ public class SakBehandler implements Runnable {
                             List<Sak> alleSaker = sakDao2.hentAlleSaker(); 
                             ut.writeObject(new SocketResponse(true, alleSaker));
                             break;
+                        case "HENT_STATUS":
+                            StatusDao statusDao = new StatusDao(conn);
+                            List<String> alleStatus = statusDao.hentAlleStatus();
+                            ut.writeObject(new SocketResponse(true, alleStatus));
+                            break;
                         case "OPPDATER_SAK":
                             Sak sakOppdatert = (Sak) req.getData();
                             SakDao sakDaoUpdate = new SakDao(conn);
@@ -81,7 +87,7 @@ public class SakBehandler implements Runnable {
         } catch (Exception e) {
             // Kaster EOFException når klienten kobler fra. Vi har ikke funnet noen annen måte å håndtere dette på.
             // Den har tilsynelatende ingen innvirkning på serverens drift.
-            
+            // Vi har ikke opplevd noen problemer med funksjonalitet som resultat av denne exceptionen.
         }
     }
     

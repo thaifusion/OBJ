@@ -52,7 +52,7 @@ public class App extends Application {
         // Start GUI
         if (valgtBruker.getRolle() == Rolle.LEDER) {
             LederView lederView = new LederView(valgtBruker);
-            Scene sceneLeder = new Scene(lederView.getLederView(), 800, 600);
+            Scene sceneLeder = new Scene(lederView.getLederView(), 1200, 800);
             stage.setTitle("Sakshåndteringssystem - Innlogget som: " + valgtBruker.getBrukernavn() + " (" + valgtBruker.getRolle() + ")");
             stage.setScene(sceneLeder);
             stage.show();
@@ -66,8 +66,8 @@ public class App extends Application {
         Scene scene = new Scene(view.getView());
         stage.setTitle("Sakshåndteringssystem - Innlogget som: " + valgtBruker.getBrukernavn() + " (" + valgtBruker.getRolle() + ")");
         stage.setScene(scene);
-        stage.setWidth(800);
-        stage.setHeight(600);
+        stage.setWidth(1200);
+        stage.setHeight(800);
         stage.show();
     }
 

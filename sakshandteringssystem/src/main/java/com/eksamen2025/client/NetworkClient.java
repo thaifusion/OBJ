@@ -114,16 +114,16 @@ public class NetworkClient {
     return new ArrayList<>();
 }
 
-    public static List<String> hentStatusFraServer() {
+    public static List<String> hentAlleStatusFraServer() {
         try (
             Socket socket = new Socket("localhost", 3000);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
         ) {
-            SocketRequest forespørsel = new SocketRequest("HENT_STATUS", null, aktivBruker != null ? aktivBruker.getBrukernavn() : null);
+            SocketRequest forespørsel = new SocketRequest("HENT_STATUS", null, aktivBruker.getBrukernavn());
             out.writeObject(forespørsel);
             out.flush();
-            SocketResponse respons = (SocketResponse) in.readObject(); // Typetvinger til SocketResponse
+            SocketResponse respons = (SocketResponse) in.readObject();
             Object result = respons.getResult();
             if (result instanceof List<?>) {
                 List<?> list = (List<?>) result;

@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import static java.sql.Types.INTEGER;
 
 /** @author Jørgen
  * Klassen oppretter forbindelse med databasen for å hente saker.
@@ -56,15 +57,15 @@ public class SakDao {
     }
 
     public boolean oppdaterSak(Sak sak) {
-        System.out.println("Starter oppdaterSak for sak ID: " + sak.getId());
-        String sql = "UPDATE sak SET mottaker_id=? WHERE id=?";
+        String sql = "UPDATE sak SET mottaker_id=?, status_id=? WHERE id=?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             if (sak.getMottaker() != null && !sak.getMottaker().isEmpty()) {
-                stmt.setInt(1, hentBrukerId(sak.getMottaker())); // Riktig indeks!
+                stmt.setInt(1, hentBrukerId(sak.getMottaker()));
             } else {
-                stmt.setNull(1, java.sql.Types.INTEGER);
+                stmt.setNull(1, INTEGER);
             }
-            stmt.setInt(2, Integer.parseInt(sak.getId())); // Riktig indeks!
+            stmt.setInt(2, hentStatusId(sak.getStatus()));
+            stmt.setInt(3, Integer.parseInt(sak.getId()));
             int rows = stmt.executeUpdate();
             System.out.println("Antall rader oppdatert: " + rows + " for sak id: " + sak.getId());
             return rows > 0;

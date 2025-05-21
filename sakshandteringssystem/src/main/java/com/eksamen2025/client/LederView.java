@@ -10,7 +10,6 @@ import java.util.List;
 import com.eksamen2025.SocketRequest;
 import com.eksamen2025.SocketResponse;
 import com.eksamen2025.felles.Bruker;
-import com.eksamen2025.felles.Rolle;
 import com.eksamen2025.felles.Sak;
 
 import javafx.geometry.Insets;
@@ -31,17 +30,12 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
     public LederView(Bruker bruker) {
         super(bruker);
         byggGUI();
-
-        if (aktivBruker.getRolle() == Rolle.LEDER) {
-            utviklerComboBox.setPromptText("Velg utvikler");
-
-            utviklerComboBox.getItems().setAll(NetworkClient.hentUtviklereFraServer());
-
-            btnTildelUtvikler.setOnAction(e -> tildelSak());
-        }
+        utviklerComboBox.setPromptText("Velg utvikler");
+        utviklerComboBox.getItems().setAll(NetworkClient.hentUtviklereFraServer());
+        btnTildelUtvikler.setOnAction(e -> tildelSak());
 
         statusComboBox.setPromptText("Velg status");
-        statusComboBox.getItems().setAll(NetworkClient.hentStatusFraServer());
+        statusComboBox.getItems().setAll(NetworkClient.hentAlleStatusFraServer());
     }
 
     /**
@@ -57,7 +51,7 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
             return;
         }
 
-        String valgtStatus = valgtSak.getStatus();                      // Henter status fra valgt sak
+        String valgtStatus = statusComboBox.getValue();                 // Henter status fra valgt sak
 
         if (valgtStatus == null) {                                      // Sjekker om bruker har valgt status
             melding.setText("Vennligst velg status.");
@@ -72,8 +66,10 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
             valgtSak.setStatus(valgtStatus.toString());
         }
 
+        
         if (LederController.oppdaterSak(valgtSak)) {                    // Sender sak til server, lagrer i basen og oppdaterer GUI
-            melding.setText("Sak tildelt utvikler: " + valgtUtvikler.getBrukernavn());
+            melding.setText("Sak tildelt utvikler: " + valgtUtvikler.getBrukernavn() + " med status: " + valgtStatus);
+            valgtSak.setStatus(valgtStatus);
             hentOgFiltrerSaker();
         } else {
             melding.setText("Feil ved tildeling av sak.");
@@ -122,7 +118,6 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
         byggFilterpanel();
         byggTabell();
         
-
         layout = new VBox(10);
         layout.setPadding(new Insets(15));
 

@@ -52,12 +52,11 @@ public class SakTabellView {
 
         colTittel.setCellFactory(tc -> new TableCell<>() {
         @Override
-        protected void updateItem(String item, boolean empty) {
-            super.updateItem(item, empty);
-            setText(empty || item == null ? null :
-                item.length() > 20 ? item.substring(0, 18) + "..." : item);
-        }
-    });
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.length() > 20 ? item.substring(0, 18) + "..." : item);
+            }
+        });
 
         TableColumn<Sak, String> colPrioritet = new TableColumn<>("Prioritet");
         colPrioritet.setCellValueFactory(cellData -> cellData.getValue().prioritetProperty().asString());
@@ -156,16 +155,16 @@ public class SakTabellView {
     }
     
     private void filtrerTabell() {
-    List<Sak> filtrert = saker.stream()
-        .filter(s -> cbPrioritet.getValue() == null || s.getPrioritet().name().equalsIgnoreCase(cbPrioritet.getValue()))
-        .filter(s -> cbKategori.getValue() == null || s.getKategori().equalsIgnoreCase(cbKategori.getValue()))
-        .filter(s -> cbStatus.getValue() == null || s.getStatus().equalsIgnoreCase(cbStatus.getValue()))
-        .filter(s -> tfTittelSok.getText().isEmpty() || s.getTittel().toLowerCase().contains(tfTittelSok.getText().toLowerCase()))
-        .filter(s -> tfBeskrivelseSok.getText().isEmpty() || s.getBeskrivelse().toLowerCase().contains(tfBeskrivelseSok.getText().toLowerCase()))
-        .collect(Collectors.toList());
+        List<Sak> filtrert = saker.stream()
+            .filter(s -> cbPrioritet.getValue() == null || s.getPrioritet().name().equalsIgnoreCase(cbPrioritet.getValue()))
+            .filter(s -> cbKategori.getValue() == null || s.getKategori().equalsIgnoreCase(cbKategori.getValue()))
+            .filter(s -> cbStatus.getValue() == null || s.getStatus().equalsIgnoreCase(cbStatus.getValue()))
+            .filter(s -> tfTittelSok.getText().isEmpty() || s.getTittel().toLowerCase().contains(tfTittelSok.getText().toLowerCase()))
+            .filter(s -> tfBeskrivelseSok.getText().isEmpty() || s.getBeskrivelse().toLowerCase().contains(tfBeskrivelseSok.getText().toLowerCase()))
+            .collect(Collectors.toList());
 
-    tabell.setItems(FXCollections.observableArrayList(filtrert));
-    statusLabel.setText("Viser " + filtrert.size() + " filtrerte saker.");
+        tabell.setItems(FXCollections.observableArrayList(filtrert));
+        statusLabel.setText("Viser " + filtrert.size() + " filtrerte saker.");
     }
 
     public BorderPane getView() {
