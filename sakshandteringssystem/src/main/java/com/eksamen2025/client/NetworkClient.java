@@ -26,7 +26,7 @@ public class NetworkClient {
     public static Bruker getAktivBruker() {
         return aktivBruker;
     }
-    
+
 public static String getBrukernavn() {
     return aktivBruker != null ? aktivBruker.getBrukernavn() : "Anonymous";
 }
@@ -85,6 +85,22 @@ public static String getBrukernavn() {
 }
 
 
+public static boolean oppdaterSak(Sak sak) {
+    try (Socket socket = new Socket("localhost", 3000);
+         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+        SocketRequest req = new SocketRequest("OPPDATER_SAK", sak, getBrukernavn());
+        out.writeObject(req);
+        out.flush();
+
+        SocketResponse res = (SocketResponse) in.readObject();
+        return res.isSuccess();
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 
 
 }

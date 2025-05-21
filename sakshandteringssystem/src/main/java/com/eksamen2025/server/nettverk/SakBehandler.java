@@ -62,6 +62,13 @@ public void run() {
                         List<Sak> alleSaker = sakDao2.hentAlleSaker(); 
                         ut.writeObject(new SocketResponse(true, alleSaker));
                         break;
+                    case "OPPDATER_SAK":
+                        Sak oppdatert = (Sak) req.getData();  // NB: ikke getPayload(), men getData() i din kode
+                        SakDao sakDao3 = new SakDao(conn);
+                        sakDao3.oppdaterSak(oppdatert);
+                        ut.writeObject(new SocketResponse(true, "Sak oppdatert"));
+                        break;
+
                     default:
                         ut.writeObject(new SocketResponse(false, "Ukjent forespørsel"));
                         break;

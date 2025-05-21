@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -197,7 +198,7 @@ public class SakTabellView {
     });
 
     Button btnOppdater = new Button("Oppdater");
-    btnOppdater.setOnAction(e -> hentOgFiltrerSaker());
+    btnOppdater.setOnAction(e -> oppdaterValgtSak());
 
     Button btnDetaljer = new Button("Vis detaljer");
     btnDetaljer.setOnAction(e -> {
@@ -229,6 +230,57 @@ private HBox byggFilterpanel() {
     btnFiltrer.setOnAction(e -> filtrerTabell());
 
     return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, btnFiltrer);
+}
+
+
+private void oppdaterValgtSak() {
+    Sak valgt = tabell.getSelectionModel().getSelectedItem();
+    if (valgt == null) {
+        Alert alert = new Alert(Alert.AlertType.WARNING, "Du må velge en sak først.");
+        alert.showAndWait();
+        return;
+    }
+
+    Dialog<ButtonType> dialog = new Dialog<>();
+    dialog.setTitle("Oppdater sak");
+    dialog.setHeaderText("Endre status og legg inn kommentar");
+
+    ComboBox<String> cbNyStatus = new ComboBox<>();
+    cbNyStatus.getItems().setAll("SUBMITTED", "ASSIGNED", "IN_PROGRESS", "FIXED", "RESOLVED", "TEST_FAILED", "CLOSED");
+    cbNyStatus.setValue(valgt.getStatus());
+
+    TextArea kommentarFelt = new TextArea();
+    kommentarFelt.setPromptText("Skriv kommentar eller tilbakemelding");
+    kommentarFelt.setPrefRowCount(4);
+
+    VBox vbox = new VBox(10, new Label("Ny status:"), cbNyStatus, new Label("Kommentar:"), kommentarFelt);
+    dialog.getDialogPane().setContent(vbox);
+
+    dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+    dialog.showAndWait().ifPresent(type -> {
+        if (type == ButtonType.OK) {
+            valgt.setStatus(cbNyStatus.getValue());
+
+            if (aktivBruker.getRolle().name().equals("UTVIKLER")) {
+                valgt.setKommentar(kommentarFelt.getText());
+            } else if (aktivBruker.getRolle().name().equals("TESTER")) {
+                valgt.setTilbakemelding(kommentarFelt.getText());
+            }
+
+            valgt.setOppdatert(LocalDate.now());
+
+            boolean ok = NetworkClient.oppdaterSak(valgt);
+            if (ok) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Sak oppdatert.");
+                alert.showAndWait();
+                hentOgFiltrerSaker();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Feil ved oppdatering.");
+                alert.showAndWait();
+            }
+        }
+    });
 }
 
 
