@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.eksamen2025.client.InsertController;
 import com.eksamen2025.client.InsertView;
+import com.eksamen2025.client.LederView;
 import com.eksamen2025.client.NetworkClient;
 import com.eksamen2025.felles.Bruker;
 import com.eksamen2025.felles.Rolle;
@@ -49,6 +50,14 @@ public class App extends Application {
         NetworkClient.setAktivBruker(valgtBruker);
 
         // Start GUI
+        if (valgtBruker.getRolle() == Rolle.LEDER) {
+            LederView lederView = new LederView(valgtBruker);
+            Scene sceneLeder = new Scene(lederView.getLederView(), 800, 600);
+            stage.setTitle("Sakshåndteringssystem - Innlogget som: " + valgtBruker.getBrukernavn() + " (" + valgtBruker.getRolle() + ")");
+            stage.setScene(sceneLeder);
+            stage.show();
+            return;
+        }
         InsertView view = new InsertView();
         view.hentValgFraServer("localhost", 3000);
 

@@ -52,6 +52,33 @@ public static String getBrukernavn() {
         }
     }
 
+    public static List<Sak> hentSakerFraServer() {
+    try (
+        Socket socket = new Socket("localhost", 3000);
+        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
+    ) {
+        SocketRequest req = new SocketRequest("HENT_SAKER", null, aktivBruker != null ? aktivBruker.getBrukernavn() : null);
+        out.writeObject(req);
+        out.flush();
+        SocketResponse res = (SocketResponse) in.readObject();
+        Object data = res.getResult();
+        if (data instanceof List<?>) {
+            List<?> list = (List<?>) data;
+            List<Sak> saker = new ArrayList<>();
+            for (Object obj : list) {
+                if (obj instanceof Sak) {
+                    saker.add((Sak) obj);
+                }
+            }
+            return saker;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return new ArrayList<>();
+}
+
     public static List<Bruker> hentBrukereFraServer() {
     try (Socket socket = new Socket("localhost", PORT);
          ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -83,6 +110,33 @@ public static String getBrukernavn() {
     // Sørg for at du alltid returnerer noe!
     return new ArrayList<>();
 }
+
+    public static List<String> hentStatusFraServer() {
+        try (
+            Socket socket = new Socket("localhost", 3000);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
+        ) {
+            SocketRequest forespørsel = new SocketRequest("HENT_STATUS", null, aktivBruker != null ? aktivBruker.getBrukernavn() : null);
+            out.writeObject(forespørsel);
+            out.flush();
+            SocketResponse respons = (SocketResponse) in.readObject(); // Typetvinger til SocketResponse
+            Object result = respons.getResult();
+            if (result instanceof List<?>) {
+                List<?> list = (List<?>) result;
+                List<String> statusListe = new ArrayList<>();
+                for (Object objekt : list) {
+                    if (objekt instanceof String) {
+                        statusListe.add((String) objekt);
+                    }
+                }
+                return statusListe;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
 
 
 

@@ -25,16 +25,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SakTabellView {
-    private final Bruker aktivBruker;
-    private TableView<Sak> tabell = new TableView<>();
-    private ObservableList<Sak> saker = FXCollections.observableArrayList();
-    private Label statusLabel = new Label("Ingen data lastet ennå.");
+    protected final Bruker aktivBruker;
+    protected TableView<Sak> tabell = new TableView<>();
+    protected ObservableList<Sak> saker = FXCollections.observableArrayList();
+    protected Label statusLabel = new Label("Ingen data lastet ennå.");
     
-    private ComboBox<String> cbPrioritet = new ComboBox<>();
-    private ComboBox<String> cbKategori = new ComboBox<>();
-    private ComboBox<String> cbStatus = new ComboBox<>();
-    private TextField tfTittelSok = new TextField();
-    private TextField tfBeskrivelseSok = new TextField();
+    protected ComboBox<String> cbPrioritet = new ComboBox<>();
+    protected ComboBox<String> cbKategori = new ComboBox<>();
+    protected ComboBox<String> cbStatus = new ComboBox<>();
+    protected TextField tfTittelSok = new TextField();
+    protected TextField tfBeskrivelseSok = new TextField();
 
 
     public SakTabellView(Bruker bruker) {
@@ -43,7 +43,7 @@ public class SakTabellView {
         hentOgFiltrerSaker();
     }
 
-    private void byggTabell() {
+    public void byggTabell() {
         TableColumn<Sak, String> colId = new TableColumn<>("ID");
         colId.setCellValueFactory(cellData -> cellData.getValue().saksIdProperty());
 
@@ -101,7 +101,7 @@ public class SakTabellView {
 
     }
 
-    private void hentOgFiltrerSaker() {
+    public void hentOgFiltrerSaker() {
         try (Socket socket = new Socket("localhost", 3000);
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
@@ -218,7 +218,7 @@ public class SakTabellView {
     return layout;
 }
 
-private HBox byggFilterpanel() {
+public HBox byggFilterpanel() {
     cbPrioritet.setPromptText("Prioritet");
     cbKategori.setPromptText("Kategori");
     cbStatus.setPromptText("Status");
