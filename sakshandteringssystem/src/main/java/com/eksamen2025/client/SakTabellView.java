@@ -166,7 +166,7 @@ public class SakTabellView {
 
     tabell.setItems(FXCollections.observableArrayList(filtrert));
     statusLabel.setText("Viser " + filtrert.size() + " filtrerte saker.");
-}
+    }
 
     public BorderPane getView() {
     BorderPane layout = new BorderPane();

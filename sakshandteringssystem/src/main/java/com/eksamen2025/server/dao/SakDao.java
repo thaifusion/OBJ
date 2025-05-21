@@ -1,14 +1,9 @@
 package com.eksamen2025.server.dao;
 
 import com.eksamen2025.felles.Sak;
-import com.eksamen2025.SocketRequest;
-import com.eksamen2025.SocketResponse;
-import com.eksamen2025.client.NetworkClient;
 import com.eksamen2025.felles.Prioritet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

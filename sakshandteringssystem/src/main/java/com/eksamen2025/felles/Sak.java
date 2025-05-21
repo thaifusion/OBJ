@@ -2,7 +2,6 @@ package com.eksamen2025.felles;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 
 import javafx.beans.property.*;
 import javafx.beans.property.ObjectProperty;

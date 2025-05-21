@@ -28,61 +28,61 @@ public class SakBehandler implements Runnable {
         this.socket = socket;
     }
 
-public void run() {
-    try (
-        ObjectOutputStream ut = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream inn = new ObjectInputStream(socket.getInputStream());
-        Connection conn = DatabaseUtil.getConnection();
-    )   {
-            Object mottatt;
-            while ((mottatt = inn.readObject()) != null) {
-                if (mottatt instanceof SocketRequest) {
-                SocketRequest req = (SocketRequest) mottatt;
-                switch (req.getType()) {
-                    case "HENT_BRUKERE":
-                        BrukerDao brukerDao = new BrukerDao(conn);
-                        ut.writeObject(new SocketResponse(true, brukerDao.hentAlleBrukere()));
-                        break;
-                    case "GET_PRIORITIES":
-                        PrioritetDao prioritetDao = new PrioritetDao(conn);
-                        ut.writeObject(new SocketResponse(true, prioritetDao.hentAllePrioriteter()));
-                        break;
-                    case "GET_CATEGORIES":
-                        KategoriDao kategoriDao = new KategoriDao(conn);
-                        ut.writeObject(new SocketResponse(true, kategoriDao.hentAlleKategorier()));
-                        break;
-                    case "INSERT":
-                        Sak sak = (Sak) req.getData();
-                        SakDao sakDao = new SakDao(conn);
-                        sakDao.leggTilSak(sak);
-                        ut.writeObject(new SocketResponse(true, "Sak lagret"));
-                        break;
-                    case "HENT_SAKER":
-                        SakDao sakDao2 = new SakDao(conn);
-                        List<Sak> alleSaker = sakDao2.hentAlleSaker(); 
-                        ut.writeObject(new SocketResponse(true, alleSaker));
-                        break;
-                    case "OPPDATER_SAK":
-                        Sak sakOppdatert = (Sak) req.getData();
-                        SakDao sakDaoUpdate = new SakDao(conn);
-                        boolean success = sakDaoUpdate.oppdaterSak(sakOppdatert);
-                        ut.writeObject(new SocketResponse(success, success ? "Sak oppdatert" : "Ingen rad oppdatert"));
-                        break;
-                    default:
-                        ut.writeObject(new SocketResponse(false, "Ukjent forespørsel"));
-                        break;
+    public void run() {
+        try (
+            ObjectOutputStream ut = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream inn = new ObjectInputStream(socket.getInputStream());
+            Connection conn = DatabaseUtil.getConnection();
+        )   {
+                Object mottatt;
+                while ((mottatt = inn.readObject()) != null) {
+                    System.out.println("Mottatt objekt: " + mottatt.toString());
+                    if (mottatt instanceof SocketRequest) {
+                    SocketRequest req = (SocketRequest) mottatt;
+                    switch (req.getType()) {
+                        case "HENT_BRUKERE":
+                            BrukerDao brukerDao = new BrukerDao(conn);
+                            ut.writeObject(new SocketResponse(true, brukerDao.hentAlleBrukere()));
+                            break;
+                        case "GET_PRIORITIES":
+                            PrioritetDao prioritetDao = new PrioritetDao(conn);
+                            ut.writeObject(new SocketResponse(true, prioritetDao.hentAllePrioriteter()));
+                            break;
+                        case "GET_CATEGORIES":
+                            KategoriDao kategoriDao = new KategoriDao(conn);
+                            ut.writeObject(new SocketResponse(true, kategoriDao.hentAlleKategorier()));
+                            break;
+                        case "INSERT":
+                            Sak sak = (Sak) req.getData();
+                            SakDao sakDao = new SakDao(conn);
+                            sakDao.leggTilSak(sak);
+                            ut.writeObject(new SocketResponse(true, "Sak lagret"));
+                            break;
+                        case "HENT_SAKER":
+                            SakDao sakDao2 = new SakDao(conn);
+                            List<Sak> alleSaker = sakDao2.hentAlleSaker(); 
+                            ut.writeObject(new SocketResponse(true, alleSaker));
+                            break;
+                        case "OPPDATER_SAK":
+                            Sak sakOppdatert = (Sak) req.getData();
+                            SakDao sakDaoUpdate = new SakDao(conn);
+                            boolean success = sakDaoUpdate.oppdaterSak(sakOppdatert);
+                            ut.writeObject(new SocketResponse(success, success ? "Sak oppdatert" : "Ingen rad oppdatert"));
+                            break;
+                        default:
+                            ut.writeObject(new SocketResponse(false, "Ukjent forespørsel"));
+                            break;
+                    }
+                } else {
+                    ut.writeObject(new SocketResponse(false, "Ugyldig forespørsel"));
                 }
-            } else {
-                ut.writeObject(new SocketResponse(false, "Ugyldig forespørsel"));
             }
+            
+        } catch (Exception e) {
+            // Kaster EOFException når klienten kobler fra. Vi har ikke funnet noen annen måte å håndtere dette på.
+            // Den har tilsynelatende ingen innvirkning på serverens drift.
+            
         }
-        
-    } catch (Exception e) {
-        // Kaster EOFException når klienten kobler fra. Vi har ikke funnet noen annen måte å håndtere dette på.
-        // Den har tilsynelatende ingen innvirkning på serverens drift.
-        System.err.println("Feil i SakBehandler: " + e.getMessage());
-        e.printStackTrace();
     }
-}
     
 }
