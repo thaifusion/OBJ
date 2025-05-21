@@ -3,6 +3,8 @@ package com.eksamen2025.client;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import com.eksamen2025.SocketRequest;
@@ -24,6 +26,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+/** 
+ * @author Sara
+ * UtviklerView arver fra SakTabellView og oppretter en egen layout for utvikler.
+ * Inneholder metode for å oppdatere sak, via en knapp som legges til i bunnen av tabellen.
+ */
 public class UtviklerView extends SakTabellView {
     private final BorderPane root;
 
@@ -39,11 +46,21 @@ public class UtviklerView extends SakTabellView {
         bunn.getChildren().add(bunn.getChildren().size() - 1, btnOppdaterSak);
     }
 
-    // Arver fra SakTabellView og oppretter en layout for utvikler
+    /**
+     * Arver fra SakTabellView og oppretter en egen layout for utvikler.
+     * @return root
+     */
+
     public Parent getUtviklerView() {
         return root;
     }
     
+    /** 
+     * Metode for å oppdatere sak.
+     * Viser dialogboks for å velge ny status og legge til utviklerkommentar.
+     * Sender forespørsel til server for oppdatering av sak.
+     * @return void
+     */
     private void oppdaterSak() {
         Sak valgt = super.getTabell().getSelectionModel().getSelectedItem();
         if (valgt == null) {
@@ -67,6 +84,7 @@ public class UtviklerView extends SakTabellView {
     taUtviklerkommentar.setPromptText("Skriv utviklerkommentar her...");
     taUtviklerkommentar.setPrefRowCount(4); // ?? 
 
+    // Legger inn i dialogboks
     VBox vb = new VBox(10,
         new Label("Ny status:"),
         cbStatus,
@@ -74,79 +92,85 @@ public class UtviklerView extends SakTabellView {
         taUtviklerkommentar
     );
 
+    // Setter padding og marginer
     vb.setPadding(new Insets(10));
     dialog.getDialogPane().setContent(vb);
 
-    // 
-    Optional<ButtonType> result = dialog.showAndWait();
-    if (result.isPresent() && result.get() == ButtonType.OK) {
-        String nyStatus = cbStatus.getValue();
-        String utviklerkommentar = taUtviklerkommentar.getText();
+    // Viser dialogboks og venter på svar
+    Optional<ButtonType> svar = dialog.showAndWait();
+    if (svar.isEmpty() || svar.get() != ButtonType.OK) {
+        return;
+    }
 
+    // Henter valgt status og utviklerkommentar
+    String valgtTekst = cbStatus.getValue();
+
+    // Setter ny status basert på valgt tekst
+    String nyStatusId; 
+    if ("Pågår".equals(valgtTekst)) {
+        nyStatusId = "2"; // Pågår
+    } else if ("Rettet".equals(valgtTekst)) {
+        nyStatusId = "3"; // Rettet
+    } else {
+        nyStatusId= String.valueOf(valgt.getStatus());
+    }
+     String utviklerkommentar = taUtviklerkommentar.getText(); 
+
+     // lager payload for oppdatering som Map
+        Map<String, String> payload = new HashMap<>();
+        payload.put("sakId", String.valueOf(valgt.getId()));
+        payload.put("status", nyStatusId);
+        payload.put("utviklerkommentar", utviklerkommentar);
+
+        // Sender socket forespørsel til server
         try (Socket socket = new Socket("localhost", 3000);
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-            // sender forespørsel videre til server
-            OppdaterSakPayload payload = new OppdaterSakPayload(String.valueOf(valgt.getId()), nyStatus, utviklerkommentar);
-            System.out.println(payload.toString());
-
+                // Sender forespørsel til server
             SocketRequest forespørsel = new SocketRequest("OPPDATER_SAK", payload, super.getAktivBruker().getBrukernavn());
-            out.writeObject(forespørsel);
-            out.flush();
+            out.writeObject(forespørsel); // Skriver ut objektet
+            out.flush(); // Tømmer utdata-strømmen
 
             // Får svar fra server
             SocketResponse respons = (SocketResponse) in.readObject();
+            if (!respons.isSuccess()) { // Hvis ikke suksess
+                new Alert(Alert.AlertType.ERROR, "Feil ved oppdatering av sak: " + respons.getResult()
+                ).showAndWait();
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR, "Feil ved oppdatering av sak: " + e.getMessage()).showAndWait();
+            return;
+        }
 
             // Oppdaterer GUI-et lokalt 
-            valgt.setStatus(nyStatus);
+            valgt.setStatus(nyStatusId);
             valgt.setKommentar(utviklerkommentar);
-            valgt.setOppdatert(new java.sql.Timestamp(System.currentTimeMillis())); // Oppdaterrer sakens oppdatert-tidspunkt
+            valgt.setOppdatert(new java.sql.Timestamp(System.currentTimeMillis())); // Oppdaterer sakens oppdatert-tidspunkt
             super.getTabell().refresh();
 
+            // Viser bekreftelse via alert
             new Alert(Alert.AlertType.INFORMATION, "Sak oppdatert.").showAndWait();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                new Alert(Alert.AlertType.ERROR, "Feil ved oppdatering av sak: " + e.getMessage()).showAndWait();
-        }
-    }
     }
 
-    // Hjelpemetoder for å hente felt fra superklassen SakTabellView
+    /**
+     * Hjelpemetode for å hente felt fra superklassen SakTabellView
+     * @return TableView<Sak>
+     */
     @Override
     protected TableView<Sak> getTabell() {
         return super.getTabell();
     }
 
+    /**
+     * Hjelpemetode for å hente aktiv bruker fra superklassen SakTabellView
+     * @return Bruker
+     */
     @Override
     protected Bruker getAktivBruker() {
         return super.getAktivBruker();
-    }
-
-    // Klasse for payload?? 
-    private static class OppdaterSakPayload implements java.io.Serializable {
-        private static final long serialVersionUID = 1L; // SerialVersionUID for serialisering
-
-        public final String sakId; 
-        public final String status; 
-        public final String utviklerkommentar;
-        
-        public OppdaterSakPayload(String sakId, String status, String utviklerkommentar) {
-            this.sakId = sakId;
-            this.status = status;
-            this.utviklerkommentar = utviklerkommentar;
-        }
-
-        // Example usage method to avoid unused field warning
-        @Override
-        public String toString() {
-            return "OppdaterSakPayload{" +
-                    "sakId='" + sakId + '\'' +
-                    ", status='" + status + '\'' +
-                    ", utviklerkommentar='" + utviklerkommentar + '\'' +
-                    '}';
-        }
     }
 }
 

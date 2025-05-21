@@ -37,10 +37,12 @@ public class SakTabellView {
     private ObservableList<Sak> saker = FXCollections.observableArrayList();
     private Label statusLabel = new Label("Ingen data lastet ennå.");
     
+    // Setter opp tabellen med kolonner, Sara bruker i UtviklerView
     protected TableView<Sak> getTabell() {
         return tabell;
     }
 
+    // Setter opp statusLabel, Sara bruker i UtviklerView
     protected Bruker getAktivBruker() {
         return aktivBruker;
     }

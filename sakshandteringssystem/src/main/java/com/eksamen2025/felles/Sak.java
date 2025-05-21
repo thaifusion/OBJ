@@ -47,7 +47,7 @@ public class Sak implements Serializable {
         this.tilbakemelding = oppsett.tilbakemelding;
     }
 
-    /**
+    /** @author Sara
      * 
      * @param id
      */
@@ -56,7 +56,7 @@ public class Sak implements Serializable {
     }
 
 
-    /**
+    /** @author Sara
      * 
      * @return id
      */
