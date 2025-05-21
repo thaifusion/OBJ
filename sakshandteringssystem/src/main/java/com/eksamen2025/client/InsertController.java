@@ -7,7 +7,10 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import com.eksamen2025.felles.Prioritet;
+
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 
 /** @author Ranem
  * Kontrollerklasse for InsertView.
@@ -26,15 +29,15 @@ public class InsertController {
     public InsertController(InsertView view, Rolle brukerRolle) {
         this.view = view;
         //this.brukerRolle = brukerRolle;
-
+        attachEvents();
         // Kun TESTER og LEDER har tilgang til å opprette saker
         if (brukerRolle != Rolle.TESTER && brukerRolle != Rolle.LEDER) {
-            view.setDisable(true);
+            view.deaktiverSkjemaFelter();
             showAlert("Du har ikke tilgang til å opprette saker.");
             return;
         }
 
-        attachEvents();
+        //attachEvents();
     }
     
     /**
@@ -42,6 +45,13 @@ public class InsertController {
      */
     private void attachEvents() {
         view.btnSubmit.setOnAction(e -> handleLagre());
+
+        view.btnVisSaker.setOnAction(e -> {
+        SakTabellView tabellView = new SakTabellView(NetworkClient.getAktivBruker());
+        Scene tabellScene = new Scene(tabellView.getView(), 800, 600);
+        Stage stage = (Stage) view.btnVisSaker.getScene().getWindow();
+        stage.setScene(tabellScene);
+    });
     }
 
     /**

@@ -4,6 +4,13 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 
+import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+
+
+
 /** @author Jørgen
  * Klassen representerer en sak.
  * Objektet er serialiserbart for å kunne sendes mellom server og klient.
@@ -347,5 +354,33 @@ public class Sak implements Serializable {
             return new Sak(this);
         }
     }
+
+    public StringProperty saksIdProperty() {
+    return new SimpleStringProperty(id);
+}
+
+public StringProperty tittelProperty() {
+    return new SimpleStringProperty(tittel);
+}
+ 
+public ObjectProperty<Prioritet> prioritetProperty() {
+    return new SimpleObjectProperty<>(prioritet);
+}
+
+public StringProperty kategoriProperty() {
+    return new SimpleStringProperty(kategori);
+}
+
+public StringProperty statusProperty() {
+    return new SimpleStringProperty(status);
+}
+
+public StringProperty rapportorProperty() {
+    return new SimpleStringProperty(innsender);
+}
+
+public StringProperty mottakerProperty() {
+    return new SimpleStringProperty(mottaker);
+}
 }
 

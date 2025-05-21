@@ -22,6 +22,11 @@ public class NetworkClient {
     aktivBruker = bruker;
 }
 
+ // Henter aktiv bruker (brukes i SakTabellView og andre steder)
+    public static Bruker getAktivBruker() {
+        return aktivBruker;
+    }
+    
 public static String getBrukernavn() {
     return aktivBruker != null ? aktivBruker.getBrukernavn() : "Anonymous";
 }
