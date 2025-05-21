@@ -10,6 +10,7 @@ import java.util.List;
 import com.eksamen2025.SocketRequest;
 import com.eksamen2025.SocketResponse;
 import com.eksamen2025.felles.Bruker;
+import com.eksamen2025.felles.Rolle;
 import com.eksamen2025.felles.Sak;
 
 public class NetworkClient {
@@ -138,7 +139,16 @@ public static String getBrukernavn() {
         return new ArrayList<>();
     }
 
-
+    public static List<Bruker> hentUtviklereFraServer() {
+        List<Bruker> alleBrukere = hentBrukereFraServer();
+        List<Bruker> utviklere = new ArrayList<>();
+        for (Bruker bruker : alleBrukere) {
+            if (bruker.getRolle() == Rolle.UTVIKLER) {
+                utviklere.add(bruker);
+            }
+        }
+        return utviklere;
+    }
 
 
 }

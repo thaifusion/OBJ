@@ -41,9 +41,7 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
         if (aktivBruker.getRolle() == Rolle.LEDER) {
             utviklerComboBox.setPromptText("Velg utvikler");
 
-            if (bruker.getRolle() == Rolle.UTVIKLER) {
-                utviklerComboBox.setItems(FXCollections.observableArrayList(NetworkClient.hentBrukereFraServer()));
-            } // Henter brukere fra server med rollen utvikler
+            utviklerComboBox.getItems().setAll(NetworkClient.hentUtviklereFraServer());
 
             btnTildelUtvikler.setOnAction(e -> tildelSak());
         }

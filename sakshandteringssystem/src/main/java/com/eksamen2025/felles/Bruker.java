@@ -52,5 +52,8 @@ public class Bruker implements Serializable{
         this.rolle = rolle;
     }
 
-
+    @Override
+    public String toString() {
+        return brukernavn;
+    }
 }
