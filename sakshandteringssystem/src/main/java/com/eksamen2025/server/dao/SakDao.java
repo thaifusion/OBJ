@@ -20,10 +20,10 @@ import static java.sql.Types.INTEGER;
  */
 public class SakDao {
 
-    private final Connection conn;
+    private final Connection kobling;
 
-    public SakDao(Connection conn) {
-        this.conn = conn;
+    public SakDao(Connection kobling) {
+        this.kobling = kobling;
     }
 
     /**
@@ -34,7 +34,7 @@ public class SakDao {
     public void leggTilSak(Sak sak) throws SQLException {
         String sql = "INSERT INTO sak (tittel, beskrivelse, prioritet_id, kategori_id, status_id, reporter_id, mottaker_id, opprettetTid, oppdatertTid, utviklerkommentar, testerTilbakemelding) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = kobling.prepareStatement(sql)) {
             stmt.setString(1, sak.getTittel());
             stmt.setString(2, sak.getBeskrivelse());
             stmt.setInt(3, hentPrioritetId(sak.getPrioritet()));
@@ -58,7 +58,7 @@ public class SakDao {
 
     public boolean oppdaterSak(Sak sak) {
         String sql = "UPDATE sak SET mottaker_id=?, status_id=? WHERE id=?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = kobling.prepareStatement(sql)) {
             if (sak.getMottaker() != null && !sak.getMottaker().isEmpty()) {
                 stmt.setInt(1, hentBrukerId(sak.getMottaker()));
             } else {
@@ -88,7 +88,7 @@ public class SakDao {
                      "LEFT JOIN status st ON s.status_id = st.id " +
                      "LEFT JOIN bruker br1 ON s.reporter_id = br1.id " +
                      "LEFT JOIN bruker br2 ON s.mottaker_id = br2.id";
-        try (Statement stmt = conn.createStatement();
+        try (Statement stmt = kobling.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Sak sak = new Sak.Oppsett()
@@ -121,7 +121,7 @@ public class SakDao {
      */
     private int hentPrioritetId(Prioritet prioritet) throws SQLException {
         String sql = "SELECT id FROM prioritet WHERE LOWER(navn) = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = kobling.prepareStatement(sql)) {
             stmt.setString(1, prioritet.name().toLowerCase());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) return rs.getInt("id");
@@ -138,7 +138,7 @@ public class SakDao {
      */
     private int hentKategoriId(String kategori) throws SQLException {
         String sql = "SELECT id FROM kategori WHERE navn = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = kobling.prepareStatement(sql)) {
             stmt.setString(1, kategori);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) return rs.getInt("id");
@@ -155,7 +155,7 @@ public class SakDao {
      */
     private int hentStatusId(String statusKode) throws SQLException {
         String sql = "SELECT id FROM status WHERE kode = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = kobling.prepareStatement(sql)) {
             stmt.setString(1, statusKode);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) return rs.getInt("id");
@@ -172,7 +172,7 @@ public class SakDao {
      */
     private int hentBrukerId(String brukernavn) throws SQLException {
         String sql = "SELECT id FROM bruker WHERE brukernavn = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = kobling.prepareStatement(sql)) {
             stmt.setString(1, brukernavn);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) return rs.getInt("id");

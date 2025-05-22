@@ -19,7 +19,7 @@ import com.eksamen2025.felles.Rolle;
  */
 public class BrukerDao {
     
-    private final Connection conn;
+    private final Connection kobling;
     private List<Bruker> bruker = new ArrayList<>();
     private String brukernavn;
     private String rolleString;
@@ -28,8 +28,8 @@ public class BrukerDao {
      * 
      * @param conn Databaseforbindelse
      */
-    public BrukerDao(Connection conn) {
-        this.conn = conn;
+    public BrukerDao(Connection kobling) {
+        this.kobling = kobling;
     }
 
 
@@ -40,7 +40,7 @@ public class BrukerDao {
      */
     public List<Bruker> hentAlleBrukere() throws SQLException {
         String sql = "SELECT * FROM bruker";
-        try(Statement stmt = conn.createStatement();) {
+        try(Statement stmt = kobling.createStatement();) {
             ResultSet rs = stmt. executeQuery(sql);
 
             while (rs.next()) {
@@ -63,7 +63,7 @@ public class BrukerDao {
      */
     public Bruker getBrukerFraBrukernavn(String bruker) {
         String sql = "SELECT * FROM bruker WHERE brukernavn = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = kobling.prepareStatement(sql)) {
             stmt.setString(1, brukernavn);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -88,7 +88,7 @@ public class BrukerDao {
      */
     public void leggTilBruker(Bruker bruker) throws SQLException {
         String sql = "INSERT INTO bruker (Brukernavn, Rolle) VALUES (?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = kobling.prepareStatement(sql)) {
             stmt.setString(1, bruker.getBrukernavn());
             stmt.setString(2, bruker.getRolle().toString()); //.toString for å konvertere Rolle-enumobjekt til String
             stmt.executeUpdate();

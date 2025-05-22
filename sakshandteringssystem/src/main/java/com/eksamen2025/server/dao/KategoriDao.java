@@ -15,10 +15,10 @@ import java.util.List;
 
 public class KategoriDao {
 
-    private final Connection conn;
+    private final Connection kobling;
 
-    public KategoriDao(Connection conn) {
-        this.conn = conn;
+    public KategoriDao(Connection kobling) {
+        this.kobling = kobling;
     }
 
     /**
@@ -29,7 +29,7 @@ public class KategoriDao {
     public List<String> hentAlleKategorier() throws SQLException {
         List<String> kategorier = new ArrayList<>();
         String sql = "SELECT navn FROM kategori";
-        try (PreparedStatement stmt = conn.prepareStatement(sql);
+        try (PreparedStatement stmt = kobling.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 kategorier.add(rs.getString("navn"));

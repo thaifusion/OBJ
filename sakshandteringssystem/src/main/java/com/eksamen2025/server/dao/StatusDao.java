@@ -13,10 +13,10 @@ import java.util.List;
  * Klassen oppretter forbindelse med databasen for å hente status, som er en egen tabell.
  */
 public class StatusDao {
-    private final Connection conn;
+    private final Connection kobling;
     
-    public StatusDao(Connection conn) {
-        this.conn = conn;
+    public StatusDao(Connection kobling) {
+        this.kobling = kobling;
     }
 
     /**
@@ -25,12 +25,12 @@ public class StatusDao {
      * @throws SQLException
      */
     public List<String> hentAlleStatus() throws SQLException {
-        String sql = "SELECT etikett FROM status";
-        try (PreparedStatement stmt = conn.prepareStatement(sql);
+        String sql = "SELECT kode FROM status";
+        try (PreparedStatement stmt = kobling.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery()) {
             List<String> statusListe = new ArrayList<>();
             while (rs.next()) {
-                statusListe.add(rs.getString("etikett"));
+                statusListe.add(rs.getString("kode"));
             }
             return statusListe;
         }

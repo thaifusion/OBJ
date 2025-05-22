@@ -14,10 +14,10 @@ import com.eksamen2025.felles.Prioritet;
  */
 public class PrioritetDao {
 
-    private final Connection conn;
+    private final Connection kobling;
 
-    public PrioritetDao(Connection conn) {
-        this.conn = conn;
+    public PrioritetDao(Connection kobling) {
+        this.kobling = kobling;
     }
 
     /**
@@ -28,7 +28,7 @@ public class PrioritetDao {
     public List<Prioritet> hentAllePrioriteter() throws SQLException {
         List<Prioritet> prioriteter = new ArrayList<>();
         String sql = "SELECT navn FROM prioritet";
-        try (PreparedStatement stmt = conn.prepareStatement(sql);
+        try (PreparedStatement stmt = kobling.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 String navn = rs.getString("navn");
