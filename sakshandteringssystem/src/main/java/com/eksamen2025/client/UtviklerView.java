@@ -54,6 +54,8 @@ public class UtviklerView extends SakTabellView {
     public Parent getUtviklerView() {
         return root;
     }
+
+
     
     /** 
      * Metode for å oppdatere sak.
@@ -155,11 +157,11 @@ public class UtviklerView extends SakTabellView {
             new Alert(Alert.AlertType.INFORMATION, "Sak oppdatert.").showAndWait();
     }
 
+
     /**
      * Hjelpemetode for å hente felt fra superklassen SakTabellView
      * @return TableView<Sak>
      */
-    @Override
     protected TableView<Sak> getTabell() {
         return super.getTabell();
     }
@@ -168,9 +170,8 @@ public class UtviklerView extends SakTabellView {
      * Hjelpemetode for å hente aktiv bruker fra superklassen SakTabellView
      * @return Bruker
      */
-    @Override
     protected Bruker getAktivBruker() {
-        return super.getAktivBruker();
+        return aktivBruker;
     }
 }
 

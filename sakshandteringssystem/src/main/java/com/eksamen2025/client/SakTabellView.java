@@ -261,5 +261,12 @@ public HBox byggFilterpanel() {
     return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, tfStartÅr, tfSluttÅr ,btnFiltrer);
 }
 
+protected TableView<Sak> getTabell() {
+    return tabell;
+}
+
+    protected Bruker getAktivBruker() {
+        return aktivBruker;
+    }
 
 }

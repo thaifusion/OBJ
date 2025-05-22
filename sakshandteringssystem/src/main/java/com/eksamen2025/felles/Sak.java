@@ -399,9 +399,5 @@ public class Sak implements Serializable {
     public StringProperty mottakerProperty() {
         return new SimpleStringProperty(mottaker);
     }
-
-    public String getId() {
-        return id;
-    }
 }
 

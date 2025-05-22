@@ -193,7 +193,7 @@ public class SakDao {
 
         String sql = "UPDATE sak SET status_id = ?, utviklerkommentar = ?, oppdatertTid = CURRENT_TIMESTAMP WHERE id = ?";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = kobling.prepareStatement(sql)) {
             stmt.setInt(1, Integer.parseInt(status));
             stmt.setString(2, kommentar);
             stmt.setInt(3, sakId);

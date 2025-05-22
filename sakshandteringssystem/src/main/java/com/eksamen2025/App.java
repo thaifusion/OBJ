@@ -50,21 +50,21 @@ public class App extends Application {
 
         NetworkClient.setAktivBruker(valgtBruker);
 
-        // Sjekker om bruker er utvikler, hvis ja, vis UtviklerView
+        /**
+         * Viser riktig view basert på innlogget brukers rolle.
+         * Utvikler og leder har egne views, mens tester får opp InsertView.
+         */
         if (valgtBruker.getRolle() == Rolle.UTVIKLER) {
             UtviklerView utviklerView = new UtviklerView(valgtBruker);
-            Scene sceneUtvikler = new Scene(utviklerView.getUtviklerView(), 800, 600);
+            Scene sceneUtvikler = new Scene(utviklerView.getUtviklerView(), 1200, 800);
 
             stage.setTitle("Sakshåndteringssystem - Innlogget som: " + valgtBruker.getBrukernavn() + " (" + valgtBruker.getRolle() + ")");
             stage.setScene(sceneUtvikler);
-            stage.setWidth(800);
-            stage.setHeight(600);
+            stage.setWidth(1200);
+            stage.setHeight(800);
             stage.show();
             return; 
-        }
-
-        // Ellers: start med InsertView for andre roller
-        if (valgtBruker.getRolle() == Rolle.LEDER) {
+        } else if (valgtBruker.getRolle() == Rolle.LEDER) {
             LederView lederView = new LederView(valgtBruker);
             Scene sceneLeder = new Scene(lederView.getLederView(), 1200, 800);
             stage.setTitle("Sakshåndteringssystem - Innlogget som: " + valgtBruker.getBrukernavn() + " (" + valgtBruker.getRolle() + ")");
@@ -72,6 +72,7 @@ public class App extends Application {
             stage.show();
             return;
         }
+
         InsertView view = new InsertView();
         view.hentValgFraServer("localhost", 3000);
 
