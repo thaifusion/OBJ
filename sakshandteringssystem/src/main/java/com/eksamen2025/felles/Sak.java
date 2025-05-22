@@ -3,10 +3,10 @@ package com.eksamen2025.felles;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import javafx.beans.property.*;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 
 
@@ -46,6 +46,24 @@ public class Sak implements Serializable {
         this.kommentar = oppsett.kommentar;
         this.tilbakemelding = oppsett.tilbakemelding;
     }
+
+    /** @author Sara
+     * 
+     * @param id
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+
+    /** @author Sara
+     * 
+     * @return id
+     */
+    public String getId() {
+        return id;
+    }
+
 
     /**
      * 

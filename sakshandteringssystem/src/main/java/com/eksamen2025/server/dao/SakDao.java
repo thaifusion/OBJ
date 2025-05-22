@@ -1,17 +1,17 @@
 package com.eksamen2025.server.dao;
 
-import com.eksamen2025.felles.Sak;
-import com.eksamen2025.felles.Prioritet;
-
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.eksamen2025.felles.Prioritet;
+import com.eksamen2025.felles.Sak;
 import static java.sql.Types.INTEGER;
 
 /** @author Jørgen
@@ -179,5 +179,30 @@ public class SakDao {
             }
         }
         throw new SQLException("Fant ikke bruker: " + brukernavn);
+    }
+
+    /** @author Sara
+     * Oppdaterer status og utviklerkommentar for en sak.
+     * @param sakId Sak-ID
+     * @param status Ny status
+     * @param utviklerkommentar Utviklerkommentar
+     * @return Antall rader oppdatert
+     */
+    public int oppdaterStatusOgKommentar(int sakId, String status, String kommentar) throws SQLException {
+        System.out.println("DAO oppdaterer sak # " + sakId + ", status: " + status + ", kommentar: " + kommentar);
+
+        String sql = "UPDATE sak SET status_id = ?, utviklerkommentar = ?, oppdatertTid = CURRENT_TIMESTAMP WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, Integer.parseInt(status));
+            stmt.setString(2, kommentar);
+            stmt.setInt(3, sakId);
+            int count = stmt.executeUpdate();
+            System.out.println("DAO executeUpdate returnerte:" + count);
+            return count;
+
+        } catch (SQLException e) {
+            throw new SQLException("Feil ved oppdatering av sak: " + e.getMessage(), e);
+        }
     }
 }
