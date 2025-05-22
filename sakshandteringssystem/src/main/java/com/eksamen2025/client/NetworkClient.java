@@ -172,6 +172,38 @@ public class NetworkClient {
         return utviklere;
     }
 
+    /**
+     * 
+     * @return liste med status fra server
+     * @throws IOException
+     */
+    public static List<String> hentAlleStatusFraServer(){
+        try (
+            Socket socket = new Socket("localhost", 3000);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream())
+        ) {
+            SocketRequest forespørsel = new SocketRequest("HENT_STATUS", null, aktivBruker.getBrukernavn());
+            out.writeObject(forespørsel);
+            out.flush();
+            SocketResponse respons = (SocketResponse) in.readObject();
+            Object result = respons.getResult();
+            if (result instanceof List<?>) {
+                List<?> list = (List<?>) result;
+                List<String> statusListe = new ArrayList<>();
+                for (Object objekt : list) {
+                    if (objekt instanceof String) {
+                        statusListe.add((String) objekt);
+                    }
+                }
+                return statusListe;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
 }
 
 

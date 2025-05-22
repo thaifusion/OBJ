@@ -24,7 +24,7 @@ import javafx.scene.text.Text;
  * 
  */
 public class LederView extends SakTabellView { // Velger å arve fra SakTabellView for å gjenbruke kode/metoder
-    private ComboBox<Bruker> utviklerComboBox = new ComboBox<>();
+    private ComboBox<String> utviklerComboBox = new ComboBox<>();
     private ComboBox<String> statusComboBox = new ComboBox<>();
     private Text melding = new Text();
     private Button btnTildelUtvikler = new Button("Tildel utvikler");
@@ -37,7 +37,7 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
         super(bruker);
         byggGUI();
         utviklerComboBox.setPromptText("Velg utvikler");
-        utviklerComboBox.getItems().setAll(NetworkClient.hentUtviklereFraServer());
+        utviklerComboBox.getItems().setAll(NetworkClient.hentUtviklere());
         btnTildelUtvikler.setOnAction(e -> tildelSak());
 
         statusComboBox.setPromptText("Velg status");
@@ -50,7 +50,7 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
      */
     private void tildelSak() {
         Sak valgtSak = tabell.getSelectionModel().getSelectedItem();
-        Bruker valgtUtvikler = utviklerComboBox.getValue();
+        String valgtUtvikler = utviklerComboBox.getValue();
 
         if (valgtSak == null) {                                         // Sjekker om bruker har valgt en sak
             melding.setText("Vennligst velg en sak.");
@@ -65,7 +65,7 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
         }
 
         if (valgtUtvikler != null) {                                    // Sjekker om bruker har valgt utvikler, hvis ja, sett mottaker
-            valgtSak.setMottaker(valgtUtvikler.getBrukernavn());
+            valgtSak.setMottaker(valgtUtvikler);
         }
 
         if (valgtStatus != null) {                                      // Sjekker om bruker har valgt status, hvis ja, sett status   
@@ -74,18 +74,18 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
 
         
         if (LederController.oppdaterSak(valgtSak)) {                    // Sender sak til server, lagrer i basen og oppdaterer GUI
-            melding.setText("Sak tildelt utvikler: " + valgtUtvikler.getBrukernavn() + " med status: " + valgtStatus);
+            melding.setText("Sak tildelt utvikler: " + valgtUtvikler + " med status: " + valgtStatus);
             valgtSak.setStatus(valgtStatus);
             hentOgFiltrerSaker();
         } else {
             melding.setText("Feil ved tildeling av sak.");
         }
 
-        melding.setText("Sak tildelt utvikler: " + valgtUtvikler.getBrukernavn());
+        melding.setText("Sak tildelt utvikler: " + valgtUtvikler);
         tabell.refresh();
     }
 
-    @Override
+    
     public void hentOgFiltrerSaker() {
         try (Socket socket = new Socket("localhost", 3000);
             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -121,8 +121,9 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
      * Inkluderer tabell for saker, knapper for tildeling av utvikler og tilbake til hovedmeny.
      */
     private void byggGUI() {
-        byggFilterpanel();
         byggTabell();
+        byggFilterpanel();
+        
         
         layout = new VBox(10);
         layout.setPadding(new Insets(15));

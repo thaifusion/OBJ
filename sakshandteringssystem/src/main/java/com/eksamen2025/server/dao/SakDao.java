@@ -7,10 +7,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Timestamp;
 
 import com.eksamen2025.felles.Prioritet;
 import com.eksamen2025.felles.Sak;
@@ -48,8 +49,8 @@ public class SakDao {
             } else {
                 stmt.setNull(7, Types.INTEGER);
             }
-            stmt.setTimestamp(8, sak.getOpprettet());
-            stmt.setTimestamp(9, sak.getOppdatert());
+            stmt.setTimestamp(8, sak.getOpprettet() != null ? Timestamp.valueOf(sak.getOpprettet()) : null);
+            stmt.setTimestamp(9, sak.getOppdatert() != null ? Timestamp.valueOf(sak.getOppdatert()) : null);
             stmt.setString(10, sak.getKommentar());
             stmt.setString(11, sak.getTilbakemelding());
             stmt.executeUpdate();
@@ -102,8 +103,8 @@ public class SakDao {
                     .status(rs.getString("statusKode"))
                     .innsender(rs.getString("reporterNavn"))
                     .mottaker(rs.getString("mottakerNavn"))
-                    .opprettet(rs.getTimestamp("opprettetTid"))
-                    .oppdatert(rs.getTimestamp("oppdatertTid"))
+                    .opprettet(rs.getTimestamp("opprettetTid") != null ? rs.getTimestamp("opprettetTid").toLocalDateTime() : null)
+                    .oppdatert(rs.getTimestamp("oppdatertTid") != null ? rs.getTimestamp("oppdatertTid").toLocalDateTime() : null)
                     .kommentar(rs.getString("utviklerkommentar"))
                     .tilbakemelding(rs.getString("testerTilbakemelding"))
                     .bygg();

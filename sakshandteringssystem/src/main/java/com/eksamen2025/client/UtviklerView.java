@@ -150,7 +150,6 @@ public class UtviklerView extends SakTabellView {
             // Oppdaterer GUI-et lokalt 
             valgt.setStatus(nyStatusId);
             valgt.setKommentar(utviklerkommentar);
-            valgt.setOppdatert(new java.sql.Timestamp(System.currentTimeMillis())); // Oppdaterer sakens oppdatert-tidspunkt
             super.getTabell().refresh();
 
             // Viser bekreftelse via alert

@@ -3,12 +3,10 @@ package com.eksamen2025.client;
 import com.eksamen2025.felles.Rolle;
 import com.eksamen2025.felles.Sak;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import com.eksamen2025.felles.Prioritet;
 
-import java.time.LocalDate;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
@@ -83,8 +81,8 @@ public class InsertController {
                 .kategori(kategori)
                 .status("SUBMITTED")
                 .innsender(NetworkClient.getBrukernavn())
-                .opprettet(LocalDate.now())
-                .oppdatert(LocalDate.now())
+                .opprettet(LocalDateTime.now())
+                .oppdatert(LocalDateTime.now())
                 .kommentar("")        // tom
                 .tilbakemelding("")   // tom
                 .bygg();

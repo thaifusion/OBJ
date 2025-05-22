@@ -2,6 +2,7 @@ package com.eksamen2025.felles;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -24,8 +25,8 @@ public class Sak implements Serializable {
     private String status;
     private String innsender;
     private String mottaker;
-    private Timestamp opprettet;
-    private Timestamp oppdatert;
+    private LocalDateTime opprettet;
+    private LocalDateTime oppdatert;
     private String kommentar;
     private String tilbakemelding;
 
@@ -41,7 +42,7 @@ public class Sak implements Serializable {
         this.status = oppsett.status;
         this.innsender = oppsett.innsender;
         this.mottaker = oppsett.mottaker;
-        this.opprettet = oppsett.opprettet;
+        this.opprettet = oppsett.opprettet; 
         this.oppdatert = oppsett.oppdatert;
         this.kommentar = oppsett.kommentar;
         this.tilbakemelding = oppsett.tilbakemelding;
@@ -177,16 +178,12 @@ public class Sak implements Serializable {
         return mottaker;
     }
 
-    public String getId() {
-    return id;
-    }
-
 
     /**
      * 
      * @param opprettet
      */
-    public void setOpprettet(Timestamp opprettet) {
+    public void setOpprettet(LocalDateTime opprettet) {
         this.opprettet = opprettet;
     }
 
@@ -194,7 +191,7 @@ public class Sak implements Serializable {
      * 
      * @return opprettet
      */
-    public Timestamp getOpprettet() {
+    public LocalDateTime getOpprettet() {
         return opprettet;
     }
 
@@ -202,7 +199,7 @@ public class Sak implements Serializable {
      * 
      * @param oppdatert
      */
-    public void setOppdatert(Timestamp oppdatert) {
+    public void setOppdatert(LocalDateTime oppdatert) {
         this.oppdatert = oppdatert;
     }
 
@@ -210,7 +207,7 @@ public class Sak implements Serializable {
      * 
      * @return oppdatert
      */
-    public Timestamp getOppdatert() {
+    public LocalDateTime getOppdatert() {
         return oppdatert;
     }
 
@@ -278,8 +275,8 @@ public class Sak implements Serializable {
         private String status;
         private String innsender;
         private String mottaker;
-        private Timestamp opprettet;
-        private Timestamp oppdatert;
+        private LocalDateTime opprettet;
+        private LocalDateTime oppdatert;
         private String kommentar;
         private String tilbakemelding;
 
@@ -345,14 +342,14 @@ public class Sak implements Serializable {
          * @param opprettet
          * @return this oppsett instanse
          */
-        public Oppsett opprettet(Timestamp opprettet) { this.opprettet = opprettet; return this; }
+        public Oppsett opprettet(LocalDateTime opprettet) { this.opprettet = opprettet; return this; }
 
         /**
          * 
          * @param oppdatert
          * @return this oppsett instanse
          */
-        public Oppsett oppdatert(Timestamp oppdatert) { this.oppdatert = oppdatert; return this; }
+        public Oppsett oppdatert(LocalDateTime oppdatert) { this.oppdatert = oppdatert; return this; }
 
         /**
          * 

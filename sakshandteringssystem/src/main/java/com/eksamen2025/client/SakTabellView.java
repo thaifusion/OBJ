@@ -20,11 +20,14 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -35,6 +38,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,15 +50,15 @@ import java.util.stream.Collectors;
  */
 public class SakTabellView {
     private static final int PORT = 3000;
-    private final Bruker aktivBruker;
-    private TableView<Sak> tabell = new TableView<>();
-    private ObservableList<Sak> saker = FXCollections.observableArrayList();
-    private Label statusLabel = new Label("Ingen data lastet ennå.");
-    private ComboBox<String> cbPrioritet = new ComboBox<>();
-    private ComboBox<String> cbKategori = new ComboBox<>();
-    private ComboBox<String> cbStatus = new ComboBox<>();
-    private TextField tfTittelSok = new TextField();
-    private TextField tfBeskrivelseSok = new TextField();
+    protected final Bruker aktivBruker;
+    protected TableView<Sak> tabell = new TableView<>();
+    protected ObservableList<Sak> saker = FXCollections.observableArrayList();
+    protected Label statusLabel = new Label("Ingen data lastet ennå.");
+    protected ComboBox<String> cbPrioritet = new ComboBox<>();
+    protected ComboBox<String> cbKategori = new ComboBox<>();
+    protected ComboBox<String> cbStatus = new ComboBox<>();
+    protected TextField tfTittelSok = new TextField();
+    protected TextField tfBeskrivelseSok = new TextField();
     
      /**
      * Konstruktør
@@ -72,7 +76,7 @@ public class SakTabellView {
      * Hver kolonne Knytte til egenskap i {@link Sak}-klassen ved hjelp av JavaFX bindings.
      * Resultat settes i {@code tabell}-objektet.
      */
-    private void byggTabell() {
+    protected void byggTabell() {
         TableColumn<Sak, String> colId = new TableColumn<>("ID");
         colId.setCellValueFactory(cellData -> cellData.getValue().saksIdProperty());
 
@@ -194,7 +198,7 @@ public class SakTabellView {
      * Resultat oppdaterer tabellen
      */
 
-     private void filtrerTabell() {
+     protected void filtrerTabell() {
         List<Sak> filtrert = saker.stream()
           .filter(s -> cbPrioritet.getValue() == null 
                  || cbPrioritet.getValue().equals("Alle") 
@@ -276,7 +280,7 @@ public class SakTabellView {
      * Bygge og returner et horisontalt panel
      * @return HBox- layout
      */ 
-    private HBox byggFilterpanel() {
+    protected HBox byggFilterpanel() {
         cbPrioritet.setPromptText("Prioritet");
         cbKategori.setPromptText("Kategori");
         cbStatus.setPromptText("Status");
@@ -295,8 +299,8 @@ public class SakTabellView {
      * Hvis brukeren bekrefter så sende sak til server etter oppdatere via {@link NetworkClient#oppdaterSak(Sak)}.
      * Tabellen lastes inn på nytt etter oppdatering
      */ 
-    private void oppdaterValgtSak(){
-        Sak valgt =tabell.getSelectionModel().getSelectedItem();
+    protected void oppdaterValgtSak(){
+        Sak valgt = tabell.getSelectionModel().getSelectedItem();
         if (valgt == null){
             new Alert(Alert.AlertType.WARNING, "Du må velge en sak først.").showAndWait();
             return;
@@ -346,7 +350,7 @@ public class SakTabellView {
         dialog.showAndWait().ifPresent(type -> {
             if (type == ButtonType.OK) {
                 valgt.setStatus(cbNyStatus.getValue());
-                valgt.setOppdatert(LocalDate.now());
+                valgt.setOppdatert(LocalDateTime.now());
 
                 switch (rolle) {
                     case TESTER:
@@ -376,5 +380,19 @@ public class SakTabellView {
     
     }
 
+        /**
+     * Hjelpemetode for å hente felt fra superklassen SakTabellView
+     * @return TableView<Sak>
+     */
+    protected TableView<Sak> getTabell() {
+        return tabell;
+    }
 
+    /**
+     * Hjelpemetode for å hente aktiv bruker fra superklassen SakTabellView
+     * @return Bruker
+     */
+    protected Bruker getAktivBruker() {
+        return aktivBruker;
+    }
 }
