@@ -1,28 +1,35 @@
 package com.eksamen2025.client;
 
-import com.eksamen2025.felles.Bruker;
-import com.eksamen2025.felles.Rolle;
-import com.eksamen2025.felles.Sak;
-import com.eksamen2025.SocketRequest;
-import com.eksamen2025.SocketResponse;
-
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.eksamen2025.SocketRequest;
+import com.eksamen2025.SocketResponse;
+import com.eksamen2025.felles.Bruker;
+import com.eksamen2025.felles.Rolle;
+import com.eksamen2025.felles.Sak;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class SakTabellView {
     protected final Bruker aktivBruker;
@@ -35,6 +42,8 @@ public class SakTabellView {
     protected ComboBox<String> cbStatus = new ComboBox<>();
     protected TextField tfTittelSok = new TextField();
     protected TextField tfBeskrivelseSok = new TextField();
+    private TextField tfStartÅr = new TextField();
+    private TextField tfSluttÅr = new TextField();
 
 
     public SakTabellView(Bruker bruker) {
@@ -155,13 +164,33 @@ public class SakTabellView {
     }
     
     private void filtrerTabell() {
-        List<Sak> filtrert = saker.stream()
-            .filter(s -> cbPrioritet.getValue() == null || s.getPrioritet().name().equalsIgnoreCase(cbPrioritet.getValue()))
-            .filter(s -> cbKategori.getValue() == null || s.getKategori().equalsIgnoreCase(cbKategori.getValue()))
-            .filter(s -> cbStatus.getValue() == null || s.getStatus().equalsIgnoreCase(cbStatus.getValue()))
-            .filter(s -> tfTittelSok.getText().isEmpty() || s.getTittel().toLowerCase().contains(tfTittelSok.getText().toLowerCase()))
-            .filter(s -> tfBeskrivelseSok.getText().isEmpty() || s.getBeskrivelse().toLowerCase().contains(tfBeskrivelseSok.getText().toLowerCase()))
-            .collect(Collectors.toList());
+    List<Sak> filtrert = saker.stream()
+        .filter(s -> cbPrioritet.getValue() == null || s.getPrioritet().name().equalsIgnoreCase(cbPrioritet.getValue()))
+        .filter(s -> cbKategori.getValue() == null || s.getKategori().equalsIgnoreCase(cbKategori.getValue()))
+        .filter(s -> cbStatus.getValue() == null || s.getStatus().equalsIgnoreCase(cbStatus.getValue()))
+        .filter(s -> tfTittelSok.getText().isEmpty() || s.getTittel().toLowerCase().contains(tfTittelSok.getText().toLowerCase()))
+        .filter(s -> tfBeskrivelseSok.getText().isEmpty() || s.getBeskrivelse().toLowerCase().contains(tfBeskrivelseSok.getText().toLowerCase()))
+        .filter(s -> {
+            if (tfStartÅr.getText().isEmpty()) return true;
+            // Legger inn en sjekk på at bruker skriver inn et tall i år-feltet
+            // Det vil bli ignorert hvis det er bokstaver eller ugyldig tall!
+            try {
+                int start = Integer.parseInt(tfStartÅr.getText());
+                return s.getOpprettet().toLocalDateTime().getYear() >= start;
+            } catch (NumberFormatException e) {
+                return true; 
+            }
+        })
+        .filter(s -> {
+            if (tfSluttÅr.getText().isEmpty()) return true;
+            try {
+                int slutt = Integer.parseInt(tfSluttÅr.getText());
+                return s.getOpprettet().toLocalDateTime().getYear() <= slutt;
+            } catch (NumberFormatException e) {
+                return true;
+            }
+        })
+        .collect(Collectors.toList());
 
         tabell.setItems(FXCollections.observableArrayList(filtrert));
         statusLabel.setText("Viser " + filtrert.size() + " filtrerte saker.");
@@ -223,11 +252,13 @@ public HBox byggFilterpanel() {
     cbStatus.setPromptText("Status");
     tfTittelSok.setPromptText("Søk tittel");
     tfBeskrivelseSok.setPromptText("Søk beskrivelse");
+    tfStartÅr.setPromptText("Startår");
+    tfSluttÅr.setPromptText("Sluttår");
 
     Button btnFiltrer = new Button("Søk");
     btnFiltrer.setOnAction(e -> filtrerTabell());
 
-    return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, btnFiltrer);
+    return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, tfStartÅr, tfSluttÅr ,btnFiltrer);
 }
 
 
