@@ -12,50 +12,75 @@ import com.eksamen2025.SocketResponse;
 import com.eksamen2025.felles.Bruker;
 import com.eksamen2025.felles.Sak;
 
+/** @author Ranem
+ * Klassen håndatere kommunikasjon mellom klient og server
+ * informasjon over nettverlet som bruker og saker
+ */
 public class NetworkClient {
     private static String brukernavn;
     private static final int PORT = 3000;
     private static Bruker aktivBruker;
-    
 
-    public static void setAktivBruker(Bruker bruker) {
-    aktivBruker = bruker;
-}
+ /**
+     *
+     * @param bruker 
+     */  
+    public static void setAktivBruker(Bruker bruker){
+        aktivBruker = bruker;
+    }
 
- // Henter aktiv bruker (brukes i SakTabellView og andre steder)
-    public static Bruker getAktivBruker() {
+    /**
+     *
+     * @return Bruker (aktive brukere) 
+     */
+    public static Bruker getAktivBruker(){
         return aktivBruker;
     }
 
-public static String getBrukernavn() {
-    return aktivBruker != null ? aktivBruker.getBrukernavn() : "Anonymous";
-}
+    /**
+     *
+     * @return Brukernavn eller "Anonymous" 
+     */
+    public static String getBrukernavn(){
+        return aktivBruker != null ? aktivBruker.getBrukernavn() : "Anonymous";
+    }
 
-    public static void setBrukernavn(String navn) {
+     /**
+     *
+     * @param navn 
+     */
+    public static void setBrukernavn(String navn){
         brukernavn = navn;
     }
 
-    public static boolean sendSak(Sak sak) {
+    /**
+     *
+     * @param sak sende ny sak til server for å lagring
+     * @return true 
+     */
+    public static boolean sendSak(Sak sak){
         try (Socket socket = new Socket("localhost", PORT);
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-            SocketRequest req = new SocketRequest("INSERT", sak, brukernavn);
-            out.writeObject(req);
+        SocketRequest req = new SocketRequest("INSERT", sak, brukernavn);
+        out.writeObject(req);
 
-            SocketResponse res = (SocketResponse) in.readObject();
-            return res.isSuccess();
-
-        } catch (IOException | ClassNotFoundException e) {
+        SocketResponse res = (SocketResponse) in.readObject();
+        return res.isSuccess();
+        } catch  (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return false;
         }
     }
-
-    public static List<Bruker> hentBrukereFraServer() {
-    try (Socket socket = new Socket("localhost", PORT);
-         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+    /**
+     *
+     * @return Liste fra server med bruker eller tom liste
+     */
+    public static List<Bruker> hentBrukereFraServer(){
+         try (Socket socket = new Socket("localhost", PORT);
+        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
         SocketRequest req = new SocketRequest("HENT_BRUKERE", null, null);
         out.writeObject(req);
@@ -63,32 +88,32 @@ public static String getBrukernavn() {
         SocketResponse res = (SocketResponse) in.readObject();
         Object data = res.getResult();
 
-        if (data instanceof List<?>) {
+        if (data instanceof List<?>){
             List<?> list = (List<?>) data;
-            List<Bruker> bruker = new ArrayList<>();
+            List<Bruker> brukere = new ArrayList<>();
 
-            for (Object obj : list) {
-                if (obj instanceof Bruker) {
-                    bruker.add((Bruker) obj);
+            for (Object obj : list){
+                if (obj instanceof Bruker){
+                    brukere.add((Bruker) obj);
                 }
             }
-
-            return bruker;
+            return brukere;
         }
-
     } catch (IOException | ClassNotFoundException e) {
-        e.printStackTrace();
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
-    // Sørg for at du alltid returnerer noe!
-    return new ArrayList<>();
-}
-
-
-public static boolean oppdaterSak(Sak sak) {
-    try (Socket socket = new Socket("localhost", 3000);
-         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+    /**
+     *
+     * @param sak oppdatere en sak
+     * @return true hvis oppdatering eller false.
+     */ 
+    public static boolean oppdaterSak(Sak sak){
+        try (Socket socket = new Socket("localhost", PORT);
+        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
         SocketRequest req = new SocketRequest("OPPDATER_SAK", sak, getBrukernavn());
         out.writeObject(req);
@@ -96,22 +121,27 @@ public static boolean oppdaterSak(Sak sak) {
 
         SocketResponse res = (SocketResponse) in.readObject();
         return res.isSuccess();
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
-    }
-}
-
-public static List<String> hentUtviklere() {
-    List<String> utviklere = new ArrayList<>();
-    for (Bruker b : hentBrukereFraServer()) {
-        if (b.getRolle().name().equals("UTVIKLER")) {
-            utviklere.add(b.getBrukernavn());
+    }  catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
-    return utviklere;
+
+    /**
+     *
+     * @return Liste for utviklere.
+     */
+    public static List<String> hentUtviklere() {
+        List<String> utviklere = new ArrayList<>();
+        for (Bruker b: hentBrukereFraServer()) {
+            if (b.getRolle().name().equals("UTVIKLER")) {
+                utviklere.add(b.getBrukernavn());
+            }
+
+        }
+        return utviklere;
+    }
+
 }
 
 
-
-}
