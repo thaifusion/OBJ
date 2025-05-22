@@ -65,7 +65,7 @@ public void run() {
                         ut.writeObject(new SocketResponse(true, alleSaker));
                         break;
                     case "OPPDATER_SAK":
-                        Sak oppdatert = (Sak) req.getData();  // NB: ikke getPayload(), men getData() i din kode
+                        Sak oppdatert = (Sak) req.getData(); 
                         SakDao sakDao3 = new SakDao(conn);
                         sakDao3.oppdaterSak(oppdatert);
                         ut.writeObject(new SocketResponse(true, "Sak oppdatert"));
