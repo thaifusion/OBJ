@@ -17,6 +17,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
+
+/** @author Jørgen og Sara
+ * LederView-klassen: håndterer visningen for leder.
+ * Den viser en tabell med saker og gir mulighet for å tildele utviklere og status.
+ * 
+ */
 public class LederView extends SakTabellView { // Velger å arve fra SakTabellView for å gjenbruke kode/metoder
     private ComboBox<Bruker> utviklerComboBox = new ComboBox<>();
     private ComboBox<String> statusComboBox = new ComboBox<>();
@@ -94,9 +100,9 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
             Object data = res.getResult();
             List<Sak> alleSaker = new ArrayList<>();
             if (data instanceof List<?>) {
-                for (Object o : (List<?>) data) {
-                    if (o instanceof Sak) {
-                        alleSaker.add((Sak) o);
+                for (Object objekt : (List<?>) data) {
+                    if (objekt instanceof Sak) {
+                        alleSaker.add((Sak) objekt);
                     }
                 }
             }

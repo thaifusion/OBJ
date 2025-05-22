@@ -7,6 +7,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * @author Jørgen
+ * Klassen oppretter forbindelse med databasen for å hente status, som er en egen tabell.
+ */
 public class StatusDao {
     private final Connection conn;
     
@@ -14,6 +19,11 @@ public class StatusDao {
         this.conn = conn;
     }
 
+    /**
+     * Henter alle status fra databasen.
+     * @return
+     * @throws SQLException
+     */
     public List<String> hentAlleStatus() throws SQLException {
         String sql = "SELECT etikett FROM status";
         try (PreparedStatement stmt = conn.prepareStatement(sql);

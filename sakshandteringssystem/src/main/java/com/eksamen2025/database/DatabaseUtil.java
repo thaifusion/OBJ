@@ -11,7 +11,7 @@ import java.util.Properties;
 /**
  * @author Monica
  * Klassen håndterer tilkoblingen til databasen.
- * Den laster inn konfigurasjonen fra en db.properties-fil og oppretter en forbindelse til databasen.
+ * Den laster inn noen konfigurasjoner fra db.properties-fil og oppretter en forbindelse til databasen.
  */
 public class DatabaseUtil {
     private static final String CONFIG_FILE = "sakshandteringssystem/src/main/java/com/eksamen2025/ressurser/db.properties";
@@ -45,6 +45,12 @@ public class DatabaseUtil {
         return databaseKobling;
     }
 
+    /** @author Jørgen
+     * Oppretter tabeller i databasen hvis de ikke allerede finnes.
+     * Tabellene som opprettes er: bruker, kategori, prioritet, status og sak.
+     * Om databasen ikke finnes, opprettes den også.
+     * @param dbKobling Kobling til databasen
+     */
     private static void opprettTabeller(Connection dbKobling) throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS bruker ( " +
                      "id INT AUTO_INCREMENT PRIMARY KEY, " +
@@ -70,7 +76,10 @@ public class DatabaseUtil {
               "VALUES ('SofiaLEDER', 'LEDER');";
         dbKobling.createStatement().executeUpdate(sql);
 
-
+        /**
+         * Oppretter Kategoritabellen og fyller den med noen standardverdier.
+         * Kategoriene er: UI-feil, Backend-feil og Funksjonsforespørsel.
+         */
         sql = "CREATE TABLE IF NOT EXISTS kategori ( " +
               "id INT AUTO_INCREMENT PRIMARY KEY, " +
               "navn VARCHAR(50));";
@@ -85,7 +94,10 @@ public class DatabaseUtil {
               "VALUES ('Funksjonsforespørsel');";
         dbKobling.createStatement().executeUpdate(sql);
 
-
+        /**
+         * Oppretter Prioritetstabellen og fyller den med noen standardverdier.
+         * Prioritetene er: Lav, Middels og Høy.
+         */
         sql = "CREATE TABLE IF NOT EXISTS prioritet ( " +
               "id INT AUTO_INCREMENT PRIMARY KEY, " +
               "navn VARCHAR(50));";
@@ -100,7 +112,10 @@ public class DatabaseUtil {
               "VALUES ('Høy');";
         dbKobling.createStatement().executeUpdate(sql);
 
-
+        /**
+         * Oppretter Statustabellen og fyller den med noen standardverdier.
+         * Statusene er: Innsendt, Tildelt, Under arbeid, Fikset, Løst, Testet - Feilet og Lukket.
+         */
         sql = "CREATE TABLE IF NOT EXISTS status ( " +
             "id INT AUTO_INCREMENT PRIMARY KEY, " +
             "kode VARCHAR(50), " +
@@ -128,7 +143,11 @@ public class DatabaseUtil {
               "VALUES ('CLOSED', 'Lukket');";
         dbKobling.createStatement().executeUpdate(sql);
 
-
+        /**
+         * Oppretter Sak-tabellen.
+         * Sak-tabellen har en del attributter som er relatert til de andre tabellene.
+         * Den har også noen attributter som er spesifikke for sakene.
+         */
         sql = "CREATE TABLE IF NOT EXISTS sak (" +
         "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
         "tittel VARCHAR(50) DEFAULT NULL, " +
@@ -144,6 +163,10 @@ public class DatabaseUtil {
         "testerTilbakemelding VARCHAR(255) DEFAULT NULL" +
         ");";
 
+        /**
+         * Legger til foreignkeys i Sak-tabellen.
+         * Disse refererer til de andre tabellene.
+         */
         dbKobling.createStatement().executeUpdate(sql);
         sql = "ALTER TABLE sak ADD FOREIGN KEY (prioritet_id) REFERENCES prioritet(id);";
         dbKobling.createStatement().executeUpdate(sql);
