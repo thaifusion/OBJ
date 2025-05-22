@@ -177,6 +177,11 @@ public class Sak implements Serializable {
         return mottaker;
     }
 
+    public String getId() {
+    return id;
+    }
+
+
     /**
      * 
      * @param opprettet

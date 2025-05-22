@@ -21,23 +21,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /** @author Ranem
- * Klassen InsertView bygger opp brukergrensesnittet for å sende inn en ny sak.
- * Den inneholder felter for tittel, beskrivelse, prioritet og kategori, samt en knapp for innsending.
- * Den henter også gyldige valg for prioritet og kategori fra serveren.
+ * Klassen bygger opp GUI for innsending ny saker
+ * samt en knapp for innsending og vise saker
  */
 public class InsertView {
     public TextField tfTitle = new TextField();
     public TextArea taDescription = new TextArea();
-    public ComboBox<String> cbPriority = new ComboBox<>();
+    public ComboBox<String> cbPriority= new ComboBox<>();
     public ComboBox<String> cbCategory = new ComboBox<>();
     public Button btnSubmit = new Button("Send inn sak");
-
     public Button btnVisSaker = new Button("Vis mine saker");
-
     
     /**
      * 
-     * @return GUI-komponenten feltene og knappen
+     * @return VBox
      */
     public VBox getView() {
         GridPane grid = new GridPane();
@@ -52,11 +49,10 @@ public class InsertView {
         grid.add(cbPriority, 1, 2);
         grid.add(new Label("Kategori:"), 0, 3);
         grid.add(cbCategory, 1, 3);
-        //grid.add(btnSubmit, 1, 4);
+        
         HBox knapper = new HBox(10, btnSubmit, btnVisSaker);
         VBox layout = new VBox(15, grid, knapper);
-        //VBox layout = new VBox(15, grid);
-        //layout.setPadding(new Insets(20));
+        
         layout.setPadding(new Insets(20));
         return layout;
         
@@ -64,7 +60,7 @@ public class InsertView {
 
     /**
      *
-     * @param prioriteter Liste hentet fra serveren.
+     * @param prioriteter hente liste fra serveren.
      */
     public void setPrioritetsvalg(List<String> prioriteter) {
         cbPriority.getItems().setAll(prioriteter);
@@ -72,32 +68,30 @@ public class InsertView {
     
     /**
      *
-     * @param kategorier Liste hentet fra serveren.
+     * @param kategorier hente liste fra serveren.
      */
     public void setKategoriValg(List<String> kategorier) {
         cbCategory.getItems().setAll(kategorier);
     }
 
     /**
-    * Henter valg for prioritet og kategori fra serveren via sockets,
-     * og setter disse i nedtrekkslistene.
      *
-     * @param host IP-adresse eller vertsnavn til serveren.
-     * @param port Portnummer som serveren lytter på.
+     * @param host 
+     * @param port 
      */
      public void hentValgFraServer(String host, int port) {
         try (Socket socket = new Socket(host, port);
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-            // --- Forespørsel: Prioriteter
+            // Hente Prioriteter
             SocketRequest req1 = new SocketRequest("GET_PRIORITIES", null, null);
             out.writeObject(req1);
             out.flush();
-            SocketResponse res1 = (SocketResponse) in.readObject();
 
+            SocketResponse res1 = (SocketResponse) in.readObject();
             Object data1 = res1.getResult();
-            if (data1 instanceof List<?>) {
+            if(data1 instanceof List<?>){
                 List<String> prioriteter = new ArrayList<>();
                 for (Object objekt : (List<?>) data1) {
                     if (objekt instanceof Prioritet) {
@@ -109,21 +103,22 @@ public class InsertView {
                 setPrioritetsvalg(prioriteter);
             }
 
-            // --- Forespørsel: Kategorier
+            // Hente Kategorier
             SocketRequest req2 = new SocketRequest("GET_CATEGORIES", null, null);
             out.writeObject(req2);
             out.flush();
-            SocketResponse res2 = (SocketResponse) in.readObject();
 
+            SocketResponse res2 = (SocketResponse) in.readObject();
             Object data2 = res2.getResult();
-            if (data2 instanceof List<?>) {
+            if(data2 instanceof List<?>){
                 List<String> kategorier = new ArrayList<>();
-                for (Object o : (List<?>) data2) {
-                    if (o instanceof String) {
-                        kategorier.add((String) o);
-                    }
+                for (Object o : (List<?>) data2){
+                    if (o instanceof String){
+                    kategorier.add((String) o);
                 }
-                setKategoriValg(kategorier);
+            }
+            setKategoriValg(kategorier);
+             
             }
 
         } catch (Exception e) {
@@ -131,24 +126,26 @@ public class InsertView {
         }
     }
 
-    public void setDisable(boolean disabled) {
+    /**
+     *
+     * @param disabled
+     */
+    public void setDisable(boolean disabled){
         tfTitle.setDisable(disabled);
         taDescription.setDisable(disabled);
         cbPriority.setDisable(disabled);
         cbCategory.setDisable(disabled);
         btnSubmit.setDisable(disabled);
     }
-
-    /**
- * Deaktiverer kun skjema-feltene og "Send inn"-knappen,
- * men lar andre knapper (som "Vis mine saker") være aktiv.
- */
-public void deaktiverSkjemaFelter() {
-    tfTitle.setDisable(true);
-    taDescription.setDisable(true);
-    cbPriority.setDisable(true);
-    cbCategory.setDisable(true);
-    btnSubmit.setDisable(true);
-}
+   /**
+     * Deaktiverer feltene for sende ny saker
+     */ 
+    public void deaktiverSkjemaFelter(){
+        tfTitle.setDisable(true);
+        taDescription.setDisable(true);
+        cbPriority.setDisable(true);
+        cbCategory.setDisable(true);
+        btnSubmit.setDisable(true);
+    }
 
 }
