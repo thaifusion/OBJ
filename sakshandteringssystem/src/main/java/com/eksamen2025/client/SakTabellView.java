@@ -42,8 +42,8 @@ public class SakTabellView {
     protected ComboBox<String> cbStatus = new ComboBox<>();
     protected TextField tfTittelSok = new TextField();
     protected TextField tfBeskrivelseSok = new TextField();
-    private TextField tfStartÅr = new TextField();
-    private TextField tfSluttÅr = new TextField();
+    protected TextField tfStartÅr = new TextField();
+    protected TextField tfSluttÅr = new TextField();
 
 
     public SakTabellView(Bruker bruker) {
