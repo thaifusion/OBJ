@@ -7,8 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.time.LocalDateTime;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Timestamp;

@@ -10,7 +10,6 @@ import java.util.List;
 import com.eksamen2025.SocketRequest;
 import com.eksamen2025.SocketResponse;
 import com.eksamen2025.felles.Bruker;
-import com.eksamen2025.felles.Rolle;
 import com.eksamen2025.felles.Sak;
 
 /** @author Ranem

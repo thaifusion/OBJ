@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * @author Monica
+ * @author Monica og Jørgen
  * Klassen håndterer tilkoblingen til databasen.
  * Den laster inn noen konfigurasjoner fra db.properties-fil og oppretter en forbindelse til databasen.
  */

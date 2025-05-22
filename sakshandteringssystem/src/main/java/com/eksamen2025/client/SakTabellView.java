@@ -34,14 +34,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+
 
 /** @author Ranem
  * 
@@ -59,6 +53,8 @@ public class SakTabellView {
     protected ComboBox<String> cbStatus = new ComboBox<>();
     protected TextField tfTittelSok = new TextField();
     protected TextField tfBeskrivelseSok = new TextField();
+    protected TextField tfStartÅr = new TextField();
+    protected TextField tfSluttÅr = new TextField();
     
      /**
      * Konstruktør
@@ -198,29 +194,44 @@ public class SakTabellView {
      * Resultat oppdaterer tabellen
      */
 
-     protected void filtrerTabell() {
+    protected void filtrerTabell() {
         List<Sak> filtrert = saker.stream()
-          .filter(s -> cbPrioritet.getValue() == null 
-                 || cbPrioritet.getValue().equals("Alle") 
-                 || s.getPrioritet().name().equalsIgnoreCase(cbPrioritet.getValue()))
+        .filter(s -> cbPrioritet.getValue() == null 
+             || cbPrioritet.getValue().equals("Alle") 
+             || s.getPrioritet().name().equalsIgnoreCase(cbPrioritet.getValue()))
+        .filter(s -> cbKategori.getValue() == null 
+             || cbKategori.getValue().equals("Alle") 
+             || s.getKategori().equalsIgnoreCase(cbKategori.getValue()))
+        .filter(s -> cbStatus.getValue() == null 
+             || cbStatus.getValue().equals("Alle") 
+             || s.getStatus().equalsIgnoreCase(cbStatus.getValue()))  
+        .filter(s -> tfTittelSok.getText().isEmpty() 
+             ||  s.getTittel().toLowerCase().contains(tfTittelSok.getText().toLowerCase()))
+        .filter(s -> tfBeskrivelseSok.getText().isEmpty() 
+             ||  s.getBeskrivelse().toLowerCase().contains(tfBeskrivelseSok.getText().toLowerCase()))
+        .filter(s -> {
+            if (tfStartÅr.getText().isEmpty()) return true;
+            try {
+                int start = Integer.parseInt(tfStartÅr.getText());
+                return s.getOpprettet().getYear() >= start;
+            } catch (NumberFormatException e) {
+                return true; 
+            }
+        })
+        .filter(s -> {
+            if (tfSluttÅr.getText().isEmpty()) return true;
+            try {
+                int slutt = Integer.parseInt(tfSluttÅr.getText());
+                return s.getOpprettet().getYear() <= slutt;
+            } catch (NumberFormatException e) {
+                return true;
+            }
+        })
+        .collect(Collectors.toList());
 
-          .filter(s -> cbKategori.getValue() == null 
-                 || cbKategori.getValue().equals("Alle") 
-                 || s.getKategori().equalsIgnoreCase(cbKategori.getValue()))
-
-          .filter(s -> cbStatus.getValue() == null 
-                 || cbStatus.getValue().equals("Alle") 
-                 || s.getStatus().equalsIgnoreCase(cbStatus.getValue()))  
-                 
-          .filter(s -> tfTittelSok.getText().isEmpty() 
-                 ||  s.getTittel().toLowerCase().contains(tfTittelSok.getText().toLowerCase()))
-
-          .filter(s -> tfBeskrivelseSok.getText().isEmpty() 
-                 ||  s.getBeskrivelse().toLowerCase().contains(tfBeskrivelseSok.getText().toLowerCase()))
-            .collect(Collectors.toList());
         tabell.setItems(FXCollections.observableArrayList(filtrert));
         statusLabel.setText("Viser " + filtrert.size() + " filtrerte saker.");
-     }
+    }
 
     /**
      * 
@@ -286,11 +297,13 @@ public class SakTabellView {
         cbStatus.setPromptText("Status");
         tfTittelSok.setPromptText("Søk tittel");
         tfBeskrivelseSok.setPromptText("Søk beskrivelse");
+        tfStartÅr.setPromptText("Startår");
+        tfSluttÅr.setPromptText("Sluttår");
 
         Button btnFiltrer = new Button("Søk");
         btnFiltrer.setOnAction(e -> filtrerTabell());
 
-        return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, btnFiltrer);
+        return new HBox(10, cbPrioritet, cbKategori, cbStatus, tfTittelSok, tfBeskrivelseSok, tfStartÅr, tfSluttÅr, btnFiltrer);
     }
 
     /**

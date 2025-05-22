@@ -121,15 +121,16 @@ public class LederView extends SakTabellView { // Velger å arve fra SakTabellVi
      * Inkluderer tabell for saker, knapper for tildeling av utvikler og tilbake til hovedmeny.
      */
     private void byggGUI() {
-        byggTabell();
-        byggFilterpanel();
+        HBox filterPanel = byggFilterpanel(); // Filterpanelet ser stygt ut i gui, fordi vi prøvde å implementere det rett før innlevering,
+        byggTabell();                         // og det ble ikke tid til å fikse det.
+        
         
         
         layout = new VBox(10);
         layout.setPadding(new Insets(15));
 
         HBox kontrollPanel = new HBox(10);
-        kontrollPanel.getChildren().addAll(utviklerLabel, utviklerComboBox, statusLabel, statusComboBox, btnTildelUtvikler, btnTilbake);
+        kontrollPanel.getChildren().addAll(filterPanel, utviklerLabel, utviklerComboBox, statusLabel, statusComboBox, btnTildelUtvikler, btnTilbake);
         layout.getChildren().addAll(tabell, kontrollPanel, melding);
     }
 

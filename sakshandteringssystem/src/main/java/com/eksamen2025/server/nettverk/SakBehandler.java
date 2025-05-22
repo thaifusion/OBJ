@@ -1,12 +1,10 @@
 package com.eksamen2025.server.nettverk;
 
-import java.io.EOFException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.Connection;
 import java.util.List;
-import java.util.Map;
 
 import com.eksamen2025.SocketRequest;
 import com.eksamen2025.SocketResponse;

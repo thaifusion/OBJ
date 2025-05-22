@@ -66,7 +66,7 @@ public class App extends Application {
             return; 
         } else if (valgtBruker.getRolle() == Rolle.LEDER) {
             LederView lederView = new LederView(valgtBruker);
-            Scene sceneLeder = new Scene(lederView.getLederView(), 1200, 800);
+            Scene sceneLeder = new Scene(lederView.getLederView(), 1600, 1000);
             stage.setTitle("Sakshåndteringssystem - Innlogget som: " + valgtBruker.getBrukernavn() + " (" + valgtBruker.getRolle() + ")");
             stage.setScene(sceneLeder);
             stage.show();
