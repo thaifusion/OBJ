@@ -9,3 +9,13 @@ If you want to run this application, you will need to make a .txt file and call 
 db.url=jdbc:mysql://localhost:3306/sakssystem?serverTimezone=UTC
 db.user={YOUR MYSQL USERNAME}
 db.password={YOUR MYSQL PASSWORD}
+
+After you have done this, run the FlerBrukerServer.java file before running App.java. If the database does not exist, it will be created the first time you run FlerBrukerServer.java. Console prints will tell you if this was successfull.
+
+Screenshots of the running application will follow:
+
+![Login screen](/sakshandteringssystem/src/main/java/com/eksamen2025/ressurser/screenshots/image1.png)
+
+![Tester view](/sakshandteringssystem/src/main/java/com/eksamen2025/ressurser/screenshots/image3.png)
+
+![Tester view 2](/sakshandteringssystem/src/main/java/com/eksamen2025/ressurser/screenshots/image4.png)
